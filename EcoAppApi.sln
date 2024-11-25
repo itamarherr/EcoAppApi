@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EcoAppApi", "EcoAppApi\EcoAppApi.csproj", "{E9FF24DA-AE50-4BC4-AEE1-1C8C685D72FA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAL", "DAL\DAL.csproj", "{C420C115-B057-413A-B83F-C939AAD80810}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E9FF24DA-AE50-4BC4-AEE1-1C8C685D72FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9FF24DA-AE50-4BC4-AEE1-1C8C685D72FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9FF24DA-AE50-4BC4-AEE1-1C8C685D72FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9FF24DA-AE50-4BC4-AEE1-1C8C685D72FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C420C115-B057-413A-B83F-C939AAD80810}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C420C115-B057-413A-B83F-C939AAD80810}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C420C115-B057-413A-B83F-C939AAD80810}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C420C115-B057-413A-B83F-C939AAD80810}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F5A134E4-6286-448C-9A62-EA91B9741C8C}
+	EndGlobalSection
+EndGlobal
