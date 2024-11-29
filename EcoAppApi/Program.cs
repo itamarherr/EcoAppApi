@@ -46,6 +46,7 @@ namespace ApiExercise
 
             builder.Services.AddScoped<ServicesRepository>();
             builder.Services.AddScoped<CategoryRepository>();
+            builder.Services.AddScoped<OrderRepository>();
 
 
             builder.Services.AddScoped<JwtUtils>();
