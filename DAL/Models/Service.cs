@@ -34,10 +34,14 @@ namespace DAL.Models
 
         public Category Category { get; set; }
 
+        public ICollection<Order> Orders { get; set; } = new List<Order>();
+
         public virtual string GetServiceDetails()
         {
             return $"Service: {Name}, Price: {Price:C}";
         }
+
+
 
     }
 }

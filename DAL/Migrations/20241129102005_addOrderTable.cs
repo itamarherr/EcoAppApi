@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DAL.Migrations
 {
     /// <inheritdoc />
-    public partial class seedService : Migration
+    public partial class addOrderTable : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -221,15 +221,46 @@ namespace DAL.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Orders",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    ServiceId = table.Column<int>(type: "int", nullable: false),
+                    OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TotalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    additionalNotes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastUpdate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Orders", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Orders_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Orders_Services_ServiceId",
+                        column: x => x.ServiceId,
+                        principalTable: "Services",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { 1, "bbe84a34-3b32-4e8e-b2a7-b31509134dd6", "admin", "ADMIN" });
+                values: new object[] { 1, "0d24ea26-1034-481a-ab10-30dc5cf1604b", "admin", "ADMIN" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { 1, 0, "e1a583d5-09cd-42a2-98a1-7fae22fdaa3b", "itamarherr@gmail.com", false, false, null, "ITAMARHERR@GMAIL.COM", "ITAMAR", "AQAAAAIAAYagAAAAECYeSyfi7WOQxOmFBlIfTNG294BnCbDFEJ7/6gS2ZKLsRPnxgikLj1cftoNswwRySg==", null, false, "7fdb57f8-29ee-4899-8bab-9bc4d5ac24b9", false, "Itamar" });
+                values: new object[] { 1, 0, "d466a5b3-ad0b-4113-bcfe-8612af0ce179", "itamarherr@gmail.com", false, false, null, "ITAMARHERR@GMAIL.COM", "ITAMAR", "AQAAAAIAAYagAAAAEIXmKW3iK5Y6BNhERJDafbuP8Tu8zgk+P17nMRaiIjHN62EY1Mg/MA9ody80jzjtBQ==", null, false, "ccc147a2-29bc-4863-863a-a072b1444ff1", false, "Itamar" });
 
             migrationBuilder.InsertData(
                 table: "Categories",
@@ -270,6 +301,15 @@ namespace DAL.Migrations
                     { 5, false, "Tree location", 1 },
                     { 6, false, "Tree Number", 1 },
                     { 7, false, "Tree Type", 1 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Orders",
+                columns: new[] { "Id", "LastUpdate", "OrderDate", "ServiceId", "Status", "TotalPrice", "UserId", "additionalNotes" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2024, 11, 29, 12, 20, 4, 622, DateTimeKind.Local).AddTicks(2307), new DateTime(2024, 11, 29, 12, 20, 4, 622, DateTimeKind.Local).AddTicks(2311), 1, "Pending", 0m, 1, null },
+                    { 2, new DateTime(2024, 11, 29, 12, 20, 4, 622, DateTimeKind.Local).AddTicks(2313), new DateTime(2024, 11, 29, 12, 20, 4, 622, DateTimeKind.Local).AddTicks(2315), 2, "Completed", 0m, 1, null }
                 });
 
             migrationBuilder.CreateIndex(
@@ -317,6 +357,16 @@ namespace DAL.Migrations
                 column: "SurveyId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Orders_ServiceId",
+                table: "Orders",
+                column: "ServiceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_UserId",
+                table: "Orders",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Services_CategoryId",
                 table: "Services",
                 column: "CategoryId");
@@ -342,6 +392,9 @@ namespace DAL.Migrations
 
             migrationBuilder.DropTable(
                 name: "CheckListItems");
+
+            migrationBuilder.DropTable(
+                name: "Orders");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

@@ -13,10 +13,21 @@ public class DALContext(DbContextOptions<DALContext> options) :
     public DbSet<Service> Services { get; set; } = default!;
 
     public DbSet<CheckListItem> CheckListItems { get; set; }
+    public DbSet<Order> Orders { get; set; } = default!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<Order>()
+           .HasOne(o => o.User)
+           .WithMany(u => u.Orders)
+           .HasForeignKey(o => o.UserId);
+
+        modelBuilder.Entity<Order>()
+            .HasOne(o => o.Service)
+            .WithMany(s => s.Orders)
+            .HasForeignKey(o => o.ServiceId);
 
         modelBuilder.Entity<Category>()
          .HasData([
@@ -132,6 +143,26 @@ public class DALContext(DbContextOptions<DALContext> options) :
                     SurveyId = 1
                 }
             });
+
+        modelBuilder.Entity<Order>().HasData(new[]
+{
+    new Order
+    {
+        Id = 1,
+        UserId = 1,
+        ServiceId = 1,
+        OrderDate = DateTime.Now,
+        Status = "Pending"
+    },
+    new Order
+    {
+        Id = 2,
+        UserId = 1,
+        ServiceId = 2,
+        OrderDate = DateTime.Now,
+        Status = "Completed"
+    }
+});
         var hasher = new PasswordHasher<AppUser>();
         modelBuilder.Entity<IdentityRole<int>>()
             .HasData(new[] {

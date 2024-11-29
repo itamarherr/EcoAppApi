@@ -12,7 +12,7 @@
 
         //Navigation Props:
 
-        public ICollection<Service> Services { get; set; }
+        public ICollection<Service> Services { get; set; } = new List<Service>();
 
     }
 }

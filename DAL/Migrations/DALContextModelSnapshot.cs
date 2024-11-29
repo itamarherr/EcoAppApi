@@ -94,15 +94,15 @@ namespace DAL.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "e1a583d5-09cd-42a2-98a1-7fae22fdaa3b",
+                            ConcurrencyStamp = "d466a5b3-ad0b-4113-bcfe-8612af0ce179",
                             Email = "itamarherr@gmail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "ITAMARHERR@GMAIL.COM",
                             NormalizedUserName = "ITAMAR",
-                            PasswordHash = "AQAAAAIAAYagAAAAECYeSyfi7WOQxOmFBlIfTNG294BnCbDFEJ7/6gS2ZKLsRPnxgikLj1cftoNswwRySg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEIXmKW3iK5Y6BNhERJDafbuP8Tu8zgk+P17nMRaiIjHN62EY1Mg/MA9ody80jzjtBQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "7fdb57f8-29ee-4899-8bab-9bc4d5ac24b9",
+                            SecurityStamp = "ccc147a2-29bc-4863-863a-a072b1444ff1",
                             TwoFactorEnabled = false,
                             UserName = "Itamar"
                         });
@@ -223,6 +223,67 @@ namespace DAL.Migrations
                         });
                 });
 
+            modelBuilder.Entity("DAL.Models.Order", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("LastUpdate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("OrderDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ServiceId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("additionalNotes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ServiceId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Orders");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            LastUpdate = new DateTime(2024, 11, 29, 12, 20, 4, 622, DateTimeKind.Local).AddTicks(2307),
+                            OrderDate = new DateTime(2024, 11, 29, 12, 20, 4, 622, DateTimeKind.Local).AddTicks(2311),
+                            ServiceId = 1,
+                            Status = "Pending",
+                            TotalPrice = 0m,
+                            UserId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            LastUpdate = new DateTime(2024, 11, 29, 12, 20, 4, 622, DateTimeKind.Local).AddTicks(2313),
+                            OrderDate = new DateTime(2024, 11, 29, 12, 20, 4, 622, DateTimeKind.Local).AddTicks(2315),
+                            ServiceId = 2,
+                            Status = "Completed",
+                            TotalPrice = 0m,
+                            UserId = 1
+                        });
+                });
+
             modelBuilder.Entity("DAL.Models.Service", b =>
                 {
                     b.Property<int>("Id")
@@ -334,7 +395,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "bbe84a34-3b32-4e8e-b2a7-b31509134dd6",
+                            ConcurrencyStamp = "0d24ea26-1034-481a-ab10-30dc5cf1604b",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         });
@@ -479,6 +540,25 @@ namespace DAL.Migrations
                     b.Navigation("Survey");
                 });
 
+            modelBuilder.Entity("DAL.Models.Order", b =>
+                {
+                    b.HasOne("DAL.Models.Service", "Service")
+                        .WithMany("Orders")
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DAL.Models.AppUser", "User")
+                        .WithMany("Orders")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Service");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("DAL.Models.Service", b =>
                 {
                     b.HasOne("DAL.Models.Category", "Category")
@@ -541,9 +621,19 @@ namespace DAL.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("DAL.Models.AppUser", b =>
+                {
+                    b.Navigation("Orders");
+                });
+
             modelBuilder.Entity("DAL.Models.Category", b =>
                 {
                     b.Navigation("Services");
+                });
+
+            modelBuilder.Entity("DAL.Models.Service", b =>
+                {
+                    b.Navigation("Orders");
                 });
 #pragma warning restore 612, 618
         }
