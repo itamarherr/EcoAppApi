@@ -2,11 +2,13 @@
 using ApiExercise.Services;
 using DAL.Data;
 using DAL.Models;
+using EcoAppApi.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using EcoAppApi.Utils;
 
 namespace ApiExercise
 {
@@ -44,9 +46,10 @@ namespace ApiExercise
                 };
             });
 
-            builder.Services.AddScoped<ServicesRepository>();
-            builder.Services.AddScoped<CategoryRepository>();
-            builder.Services.AddScoped<OrderRepository>();
+            builder.Services.AddScoped<ProductsRepository>();
+            builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+            builder.Services.AddScoped<IOrderService, OrderService>();
+            builder.Services.AddScoped<PricingService>();
 
 
             builder.Services.AddScoped<JwtUtils>();
@@ -61,18 +64,17 @@ namespace ApiExercise
             {
                 option.AddPolicy(name: corsPolicy, policy =>
                 {
-                    policy.WithOrigins([
+                    policy.WithOrigins(
                         "http://localhost:3000",
                         "http://localhost:5173",
-                        "http://localhost:5174",
-                    ]).AllowAnyHeader()
+                        "http://localhost:5174"
+                    ).AllowAnyHeader()
                     .AllowAnyMethod()
                     .AllowCredentials();
                 });
             });
             var app = builder.Build();
 
-            app.UseCors(corsPolicy);
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -84,7 +86,8 @@ namespace ApiExercise
             app.UseHttpsRedirection();
 
 
-            
+            app.UseCors(corsPolicy);
+
             app.UseAuthentication();
 
             app.UseAuthorization();

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DAL.Migrations
 {
     /// <inheritdoc />
-    public partial class addOrderTable : Migration
+    public partial class ReOrganozationOfProductAndOrder : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -55,16 +55,19 @@ namespace DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Categories",
+                name: "Products",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Price = table.Column<decimal>(type: "Money", nullable: false),
+                    Editing = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Categories", x => x.Id);
+                    table.PrimaryKey("PK_Products", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -174,65 +177,26 @@ namespace DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Services",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Editing = table.Column<bool>(type: "bit", nullable: false),
-                    Price = table.Column<decimal>(type: "Money", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CategoryId = table.Column<int>(type: "int", nullable: false),
-                    Discriminator = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false),
-                    Location = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    AreaSize = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    Survaypurpose = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Services", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Services_Categories_CategoryId",
-                        column: x => x.CategoryId,
-                        principalTable: "Categories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "CheckListItems",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsSelected = table.Column<bool>(type: "bit", nullable: false),
-                    SurveyId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CheckListItems", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_CheckListItems_Services_SurveyId",
-                        column: x => x.SurveyId,
-                        principalTable: "Services",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Orders",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<int>(type: "int", nullable: false),
-                    ServiceId = table.Column<int>(type: "int", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    NumberOfTrees = table.Column<int>(type: "int", nullable: false),
+                    ConsultancyType = table.Column<int>(type: "int", nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    City = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Street = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Number = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsPrivateArea = table.Column<bool>(type: "bit", nullable: false),
+                    DateForConsultancy = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    AdditionalNotes = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TotalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    additionalNotes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TotalPrice = table.Column<decimal>(type: "Money", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastUpdate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -245,9 +209,9 @@ namespace DAL.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Orders_Services_ServiceId",
-                        column: x => x.ServiceId,
-                        principalTable: "Services",
+                        name: "FK_Orders_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -255,23 +219,17 @@ namespace DAL.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { 1, "0d24ea26-1034-481a-ab10-30dc5cf1604b", "admin", "ADMIN" });
+                values: new object[] { 1, "09249667-b1a0-4b5c-9e8d-b9026e904e5e", "admin", "ADMIN" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { 1, 0, "d466a5b3-ad0b-4113-bcfe-8612af0ce179", "itamarherr@gmail.com", false, false, null, "ITAMARHERR@GMAIL.COM", "ITAMAR", "AQAAAAIAAYagAAAAEIXmKW3iK5Y6BNhERJDafbuP8Tu8zgk+P17nMRaiIjHN62EY1Mg/MA9ody80jzjtBQ==", null, false, "ccc147a2-29bc-4863-863a-a072b1444ff1", false, "Itamar" });
+                values: new object[] { 1, 0, "939b4bbe-78e7-4c69-ad65-06e8e9e759eb", "itamarherr@gmail.com", false, false, null, "ITAMARHERR@GMAIL.COM", "ITAMAR", "AQAAAAIAAYagAAAAELiFaYeW85jBjP6r6RjQFZL6ilKSjMpaZADdsMBstRGt8J/NAOO7E7kRboVfQkh3dA==", null, false, "107bb758-14ea-4cc5-9ca8-f8b34e23ac23", false, "Itamar" });
 
             migrationBuilder.InsertData(
-                table: "Categories",
-                columns: new[] { "Id", "Name" },
-                values: new object[,]
-                {
-                    { 1, "OkeConsultancy" },
-                    { 2, "EcoConsultancy" },
-                    { 3, "EcoSurvay" },
-                    { 4, "ForestSurvay" }
-                });
+                table: "Products",
+                columns: new[] { "Id", "Description", "Editing", "Name", "Price" },
+                values: new object[] { 1, "Comprehensive assessment and consultation for oaks ", false, "Oak Consultancy", 1000.0m });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",
@@ -279,37 +237,12 @@ namespace DAL.Migrations
                 values: new object[] { 1, 1 });
 
             migrationBuilder.InsertData(
-                table: "Services",
-                columns: new[] { "Id", "CategoryId", "Description", "Discriminator", "Editing", "Name", "Price" },
-                values: new object[,]
-                {
-                    { 1, 1, "Description for Oke Consultancy Product 1", "Service", true, "Oke Consultancy Product 1", 999.9m },
-                    { 2, 2, "Description for Eco Consultancy Product 1", "Service", true, "Eco Consultancy Product 1", 10.0m },
-                    { 3, 3, "Description for Eco Eco Survay Product 1", "Service", true, "Eco Survay Product 1", 999.9m },
-                    { 4, 4, "Description for Forest Survay Product 1", "Service", true, "Forest Survay Product 1", 10.0m }
-                });
-
-            migrationBuilder.InsertData(
-                table: "CheckListItems",
-                columns: new[] { "Id", "IsSelected", "Name", "SurveyId" },
-                values: new object[,]
-                {
-                    { 1, false, "Tree Age", 1 },
-                    { 2, false, "Stem diameter", 1 },
-                    { 3, false, "Tree height", 1 },
-                    { 4, false, "Tree Health status", 1 },
-                    { 5, false, "Tree location", 1 },
-                    { 6, false, "Tree Number", 1 },
-                    { 7, false, "Tree Type", 1 }
-                });
-
-            migrationBuilder.InsertData(
                 table: "Orders",
-                columns: new[] { "Id", "LastUpdate", "OrderDate", "ServiceId", "Status", "TotalPrice", "UserId", "additionalNotes" },
+                columns: new[] { "Id", "AdditionalNotes", "City", "ConsultancyType", "CreatedAt", "DateForConsultancy", "ImageUrl", "IsPrivateArea", "LastUpdate", "Number", "NumberOfTrees", "OrderDate", "ProductId", "Status", "Street", "TotalPrice", "UserId" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2024, 11, 29, 12, 20, 4, 622, DateTimeKind.Local).AddTicks(2307), new DateTime(2024, 11, 29, 12, 20, 4, 622, DateTimeKind.Local).AddTicks(2311), 1, "Pending", 0m, 1, null },
-                    { 2, new DateTime(2024, 11, 29, 12, 20, 4, 622, DateTimeKind.Local).AddTicks(2313), new DateTime(2024, 11, 29, 12, 20, 4, 622, DateTimeKind.Local).AddTicks(2315), 2, "Completed", 0m, 1, null }
+                    { 1, null, null, 0, new DateTime(2024, 12, 9, 22, 42, 6, 200, DateTimeKind.Local).AddTicks(7188), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "https://example.com/images/order1.png", false, new DateTime(2024, 12, 9, 22, 42, 6, 200, DateTimeKind.Local).AddTicks(7183), null, 0, new DateTime(2024, 12, 9, 22, 42, 6, 200, DateTimeKind.Local).AddTicks(7187), 1, "Pending", null, 0m, 1 },
+                    { 2, null, null, 0, new DateTime(2024, 12, 9, 22, 42, 6, 200, DateTimeKind.Local).AddTicks(7196), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "https://example.com/images/order2.png", false, new DateTime(2024, 12, 9, 22, 42, 6, 200, DateTimeKind.Local).AddTicks(7193), null, 0, new DateTime(2024, 12, 9, 22, 42, 6, 200, DateTimeKind.Local).AddTicks(7195), 1, "Completed", null, 0m, 1 }
                 });
 
             migrationBuilder.CreateIndex(
@@ -352,24 +285,14 @@ namespace DAL.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CheckListItems_SurveyId",
-                table: "CheckListItems",
-                column: "SurveyId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Orders_ServiceId",
+                name: "IX_Orders_ProductId",
                 table: "Orders",
-                column: "ServiceId");
+                column: "ProductId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_UserId",
                 table: "Orders",
                 column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Services_CategoryId",
-                table: "Services",
-                column: "CategoryId");
         }
 
         /// <inheritdoc />
@@ -391,9 +314,6 @@ namespace DAL.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "CheckListItems");
-
-            migrationBuilder.DropTable(
                 name: "Orders");
 
             migrationBuilder.DropTable(
@@ -403,10 +323,7 @@ namespace DAL.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "Services");
-
-            migrationBuilder.DropTable(
-                name: "Categories");
+                name: "Products");
         }
     }
 }

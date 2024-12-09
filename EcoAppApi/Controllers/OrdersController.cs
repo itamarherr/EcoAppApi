@@ -51,15 +51,18 @@ namespace EcoAppApi.Controllers
             query = query.Skip((page - 1) * pageSize).Take(pageSize);
 
             // Execute query and return result
-            return await _context.Orders
-        .Include(o => o.User)
-        .Select(o => new OrderDto
-        {
-            Id = o.Id,
-        }).ToListAsync();
+            var orders = await query.Select(o => new OrderDto
+            {
+                Id = o.Id,
+               /* Name = o.Name,*/ // Assuming you want to include these fields
+                TotalPrice = o.TotalPrice,
+                CreatedAt = o.CreatedAt
+            }).ToListAsync();
+
+            return Ok(orders);
         }
-            // GET: api/Orders/5
-            [HttpGet("{id}")]
+        // GET: api/Orders/5
+        [HttpGet("{id}")]
         public async Task<ActionResult<Order>> GetOrder(int id)
         {
             var order = await _context.Orders
@@ -108,12 +111,28 @@ namespace EcoAppApi.Controllers
         // POST: api/Orders
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Order>> PostOrder(Order order)
+        public async Task<ActionResult<OrderDto>> CreateOrder(CreateOrderDto createDto)
         {
+            var user = await _context.Users.FindAsync(createDto.UserId);
+            var service = await _context.Products.FindAsync(createDto.ProductId);
+
+            if (user == null || service == null)
+            {
+                return BadRequest("Invalid User or Product ID.");
+            }
+            var order = new Order
+            {
+                UserId = createDto.UserId,
+                ProductId = createDto.ProductId,
+                AdditionalNotes = createDto.AdditionalNotes,
+                TotalPrice = createDto.TotalPrice ?? service.Price,
+                CreatedAt = DateTime.Now,
+                LastUpdate = DateTime.Now
+            };
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetOrder", new { id = order.Id }, order);
+            return CreatedAtAction(nameof(GetOrder), new { id = order.Id }, order.ToDto());
         }
 
         // DELETE: api/Orders/5

@@ -5,9 +5,9 @@ namespace DAL.Data
 {
     public class OrderRepository : IOrderRepository
     {
-        private readonly DALContext _context; // Field for the data context.
+        private readonly DALContext _context; 
 
-        // Constructor to initialize the repository with DALContext.
+     
         public OrderRepository(DALContext context)
         {
             _context = context;

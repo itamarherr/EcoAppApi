@@ -18,16 +18,7 @@ namespace DAL.Models
         public decimal Price { get; set; }
         public string? Description { get; set; } // General descripti
 
-        //public string ImageUrl { get; set; }
-
-
-
-        //Likes/Rating (when we add users/identity)
-
-
-
-
-
+ 
         //Navigation props:
 
         public int CategoryId { get; set; }

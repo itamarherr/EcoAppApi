@@ -17,6 +17,7 @@ namespace EcoAppApi.DTOs
         public string ServiceType { get; set; }
         public OrderStatus Status { get; set; }
         public decimal TotalPrice { get; set; }
+        public string ImageUrl { get; set; }
 
         // Additional admin-specific information
         public string UserEmail { get; set; }
@@ -32,12 +33,13 @@ namespace EcoAppApi.DTOs
             {
                 Id = order.Id,
                 UserName = order.User?.UserName ?? "Unknown", // Assuming AppUser has a UserName property
-                CreatedAt = order.OrderDate,
-                ServiceType = order.Service?.Name ?? "Unspecified", // Assuming Service has a Name property
+                CreatedAt = order.CreatedAt,
+                ServiceType = order.Product?.Name ?? "Unspecified", // Assuming Service has a Name property
                 Status = Enum.TryParse(order.Status, out OrderStatus status) ? status : OrderStatus.pending,
                 TotalPrice = order.TotalPrice,
+                ImageUrl = order.ImageUrl,
                 UserEmail = order.User?.Email ?? "N/A", // Assuming AppUser has an Email property
-                AdminNotes = order.additionalNotes
+                AdminNotes = order.AdditionalNotes
             };
         }
     }

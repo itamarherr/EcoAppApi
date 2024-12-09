@@ -17,7 +17,7 @@ namespace DAL.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.8")
+                .HasAnnotation("ProductVersion", "8.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -94,132 +94,17 @@ namespace DAL.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "d466a5b3-ad0b-4113-bcfe-8612af0ce179",
+                            ConcurrencyStamp = "939b4bbe-78e7-4c69-ad65-06e8e9e759eb",
                             Email = "itamarherr@gmail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "ITAMARHERR@GMAIL.COM",
                             NormalizedUserName = "ITAMAR",
-                            PasswordHash = "AQAAAAIAAYagAAAAEIXmKW3iK5Y6BNhERJDafbuP8Tu8zgk+P17nMRaiIjHN62EY1Mg/MA9ody80jzjtBQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAELiFaYeW85jBjP6r6RjQFZL6ilKSjMpaZADdsMBstRGt8J/NAOO7E7kRboVfQkh3dA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "ccc147a2-29bc-4863-863a-a072b1444ff1",
+                            SecurityStamp = "107bb758-14ea-4cc5-9ca8-f8b34e23ac23",
                             TwoFactorEnabled = false,
                             UserName = "Itamar"
-                        });
-                });
-
-            modelBuilder.Entity("DAL.Models.Category", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Categories");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "OkeConsultancy"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "EcoConsultancy"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "EcoSurvay"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Name = "ForestSurvay"
-                        });
-                });
-
-            modelBuilder.Entity("DAL.Models.CheckListItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("IsSelected")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("SurveyId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SurveyId");
-
-                    b.ToTable("CheckListItems");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            IsSelected = false,
-                            Name = "Tree Age",
-                            SurveyId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            IsSelected = false,
-                            Name = "Stem diameter",
-                            SurveyId = 1
-                        },
-                        new
-                        {
-                            Id = 3,
-                            IsSelected = false,
-                            Name = "Tree height",
-                            SurveyId = 1
-                        },
-                        new
-                        {
-                            Id = 4,
-                            IsSelected = false,
-                            Name = "Tree Health status",
-                            SurveyId = 1
-                        },
-                        new
-                        {
-                            Id = 5,
-                            IsSelected = false,
-                            Name = "Tree location",
-                            SurveyId = 1
-                        },
-                        new
-                        {
-                            Id = 6,
-                            IsSelected = false,
-                            Name = "Tree Number",
-                            SurveyId = 1
-                        },
-                        new
-                        {
-                            Id = 7,
-                            IsSelected = false,
-                            Name = "Tree Type",
-                            SurveyId = 1
                         });
                 });
 
@@ -231,31 +116,60 @@ namespace DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("AdditionalNotes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("City")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ConsultancyType")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedAt");
+
+                    b.Property<DateTime>("DateForConsultancy")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsPrivateArea")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("LastUpdate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Number")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("NumberOfTrees")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ServiceId")
+                    b.Property<int>("ProductId")
                         .HasColumnType("int");
 
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Street")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal>("TotalPrice")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("Money");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.Property<string>("additionalNotes")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("ServiceId");
+                    b.HasIndex("ProductId");
 
                     b.HasIndex("UserId");
 
@@ -265,9 +179,15 @@ namespace DAL.Migrations
                         new
                         {
                             Id = 1,
-                            LastUpdate = new DateTime(2024, 11, 29, 12, 20, 4, 622, DateTimeKind.Local).AddTicks(2307),
-                            OrderDate = new DateTime(2024, 11, 29, 12, 20, 4, 622, DateTimeKind.Local).AddTicks(2311),
-                            ServiceId = 1,
+                            ConsultancyType = 0,
+                            CreatedAt = new DateTime(2024, 12, 9, 22, 42, 6, 200, DateTimeKind.Local).AddTicks(7188),
+                            DateForConsultancy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ImageUrl = "https://example.com/images/order1.png",
+                            IsPrivateArea = false,
+                            LastUpdate = new DateTime(2024, 12, 9, 22, 42, 6, 200, DateTimeKind.Local).AddTicks(7183),
+                            NumberOfTrees = 0,
+                            OrderDate = new DateTime(2024, 12, 9, 22, 42, 6, 200, DateTimeKind.Local).AddTicks(7187),
+                            ProductId = 1,
                             Status = "Pending",
                             TotalPrice = 0m,
                             UserId = 1
@@ -275,16 +195,22 @@ namespace DAL.Migrations
                         new
                         {
                             Id = 2,
-                            LastUpdate = new DateTime(2024, 11, 29, 12, 20, 4, 622, DateTimeKind.Local).AddTicks(2313),
-                            OrderDate = new DateTime(2024, 11, 29, 12, 20, 4, 622, DateTimeKind.Local).AddTicks(2315),
-                            ServiceId = 2,
+                            ConsultancyType = 0,
+                            CreatedAt = new DateTime(2024, 12, 9, 22, 42, 6, 200, DateTimeKind.Local).AddTicks(7196),
+                            DateForConsultancy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ImageUrl = "https://example.com/images/order2.png",
+                            IsPrivateArea = false,
+                            LastUpdate = new DateTime(2024, 12, 9, 22, 42, 6, 200, DateTimeKind.Local).AddTicks(7193),
+                            NumberOfTrees = 0,
+                            OrderDate = new DateTime(2024, 12, 9, 22, 42, 6, 200, DateTimeKind.Local).AddTicks(7195),
+                            ProductId = 1,
                             Status = "Completed",
                             TotalPrice = 0m,
                             UserId = 1
                         });
                 });
 
-            modelBuilder.Entity("DAL.Models.Service", b =>
+            modelBuilder.Entity("DAL.Models.Product", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -292,16 +218,9 @@ namespace DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Discriminator")
                         .IsRequired()
-                        .HasMaxLength(8)
-                        .HasColumnType("nvarchar(8)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("Editing")
                         .HasColumnType("bit");
@@ -315,50 +234,16 @@ namespace DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
-
-                    b.ToTable("Services");
-
-                    b.HasDiscriminator().HasValue("Service");
-
-                    b.UseTphMappingStrategy();
+                    b.ToTable("Products");
 
                     b.HasData(
                         new
                         {
                             Id = 1,
-                            CategoryId = 1,
-                            Description = "Description for Oke Consultancy Product 1",
-                            Editing = true,
-                            Name = "Oke Consultancy Product 1",
-                            Price = 999.9m
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CategoryId = 2,
-                            Description = "Description for Eco Consultancy Product 1",
-                            Editing = true,
-                            Name = "Eco Consultancy Product 1",
-                            Price = 10.0m
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CategoryId = 3,
-                            Description = "Description for Eco Eco Survay Product 1",
-                            Editing = true,
-                            Name = "Eco Survay Product 1",
-                            Price = 999.9m
-                        },
-                        new
-                        {
-                            Id = 4,
-                            CategoryId = 4,
-                            Description = "Description for Forest Survay Product 1",
-                            Editing = true,
-                            Name = "Forest Survay Product 1",
-                            Price = 10.0m
+                            Description = "Comprehensive assessment and consultation for oaks ",
+                            Editing = false,
+                            Name = "Oak Consultancy",
+                            Price = 1000.0m
                         });
                 });
 
@@ -395,7 +280,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "0d24ea26-1034-481a-ab10-30dc5cf1604b",
+                            ConcurrencyStamp = "09249667-b1a0-4b5c-9e8d-b9026e904e5e",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         });
@@ -511,40 +396,11 @@ namespace DAL.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("DAL.Models.Survey", b =>
-                {
-                    b.HasBaseType("DAL.Models.Service");
-
-                    b.Property<decimal>("AreaSize")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Location")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Survaypurpose")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasDiscriminator().HasValue("Survey");
-                });
-
-            modelBuilder.Entity("DAL.Models.CheckListItem", b =>
-                {
-                    b.HasOne("DAL.Models.Survey", "Survey")
-                        .WithMany()
-                        .HasForeignKey("SurveyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Survey");
-                });
-
             modelBuilder.Entity("DAL.Models.Order", b =>
                 {
-                    b.HasOne("DAL.Models.Service", "Service")
+                    b.HasOne("DAL.Models.Product", "Product")
                         .WithMany("Orders")
-                        .HasForeignKey("ServiceId")
+                        .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -554,20 +410,9 @@ namespace DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Service");
+                    b.Navigation("Product");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("DAL.Models.Service", b =>
-                {
-                    b.HasOne("DAL.Models.Category", "Category")
-                        .WithMany("Services")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -626,12 +471,7 @@ namespace DAL.Migrations
                     b.Navigation("Orders");
                 });
 
-            modelBuilder.Entity("DAL.Models.Category", b =>
-                {
-                    b.Navigation("Services");
-                });
-
-            modelBuilder.Entity("DAL.Models.Service", b =>
+            modelBuilder.Entity("DAL.Models.Product", b =>
                 {
                     b.Navigation("Orders");
                 });

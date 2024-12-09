@@ -1,42 +1,31 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using DAL.enums;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.SqlTypes;
 
-namespace DAL.Models
+namespace DAL.Models;
+
+public class Product
 {
-    public class Product
+    [Key]
+    public int Id { get; set; } = 1;
+    [Required]
+    public string Name { get; set; } = "Oak Consultancy";
+    public string Description { get; set; }
 
-    {
+    [Column(TypeName = "Money")]
+    public decimal Price { get; set; }
+  
 
-        [Key]
-        public int Id { get; set; }
+    public bool Editing {  get; set; }
+   
 
-        [Required]
-        public string Name { get; set; }
+    //Navigation props:
 
-        public bool Editing { get; set; }
-
-
-        //[Column(TypeName = "Money")]
-        //public decimal Price { get; set; }
-
-        //public string ImageUrl { get; set; }
-
-
-
-        //Likes/Rating (when we add users/identity)
+    public ICollection<Order> Orders { get; set; } = new List<Order>();
 
 
 
 
 
-        //Navigation props:
-
-        public int CategoryId { get; set; }
-
-        public Category Category { get; set; }
-
-        
-
-    }
 }
