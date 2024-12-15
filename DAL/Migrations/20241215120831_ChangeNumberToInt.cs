@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DAL.Migrations
 {
     /// <inheritdoc />
-    public partial class ReOrganozationOfProductAndOrder : Migration
+    public partial class ChangeNumberToInt : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -185,19 +185,16 @@ namespace DAL.Migrations
                     UserId = table.Column<int>(type: "int", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: false),
                     NumberOfTrees = table.Column<int>(type: "int", nullable: false),
+                    City = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Street = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Number = table.Column<int>(type: "int", nullable: false),
                     ConsultancyType = table.Column<int>(type: "int", nullable: false),
-                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    City = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Street = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Number = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsPrivateArea = table.Column<bool>(type: "bit", nullable: false),
                     DateForConsultancy = table.Column<DateTime>(type: "datetime2", nullable: false),
                     AdditionalNotes = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TotalPrice = table.Column<decimal>(type: "Money", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastUpdate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    TotalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -219,12 +216,12 @@ namespace DAL.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { 1, "09249667-b1a0-4b5c-9e8d-b9026e904e5e", "admin", "ADMIN" });
+                values: new object[] { 1, "861d4879-30d5-4660-87c1-316e3ef5df25", "admin", "ADMIN" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { 1, 0, "939b4bbe-78e7-4c69-ad65-06e8e9e759eb", "itamarherr@gmail.com", false, false, null, "ITAMARHERR@GMAIL.COM", "ITAMAR", "AQAAAAIAAYagAAAAELiFaYeW85jBjP6r6RjQFZL6ilKSjMpaZADdsMBstRGt8J/NAOO7E7kRboVfQkh3dA==", null, false, "107bb758-14ea-4cc5-9ca8-f8b34e23ac23", false, "Itamar" });
+                values: new object[] { 1, 0, "63aff2a4-d4e6-458a-9bdc-10e3e92d5d04", "itamarherr@gmail.com", false, false, null, "ITAMARHERR@GMAIL.COM", "ITAMAR", "AQAAAAIAAYagAAAAEGJN+A4mTh82Lc+JFlsSPCJ4m55GwaZRc2IOKXk2zyny8RgtGMh7BqZJJbEd3MLK2Q==", null, false, "87368c32-b35e-4ff2-b1b3-0ccbd3fc366c", false, "Itamar" });
 
             migrationBuilder.InsertData(
                 table: "Products",
@@ -238,11 +235,11 @@ namespace DAL.Migrations
 
             migrationBuilder.InsertData(
                 table: "Orders",
-                columns: new[] { "Id", "AdditionalNotes", "City", "ConsultancyType", "CreatedAt", "DateForConsultancy", "ImageUrl", "IsPrivateArea", "LastUpdate", "Number", "NumberOfTrees", "OrderDate", "ProductId", "Status", "Street", "TotalPrice", "UserId" },
+                columns: new[] { "Id", "AdditionalNotes", "City", "ConsultancyType", "CreatedAt", "DateForConsultancy", "IsPrivateArea", "Number", "NumberOfTrees", "ProductId", "Status", "Street", "TotalPrice", "UserId" },
                 values: new object[,]
                 {
-                    { 1, null, null, 0, new DateTime(2024, 12, 9, 22, 42, 6, 200, DateTimeKind.Local).AddTicks(7188), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "https://example.com/images/order1.png", false, new DateTime(2024, 12, 9, 22, 42, 6, 200, DateTimeKind.Local).AddTicks(7183), null, 0, new DateTime(2024, 12, 9, 22, 42, 6, 200, DateTimeKind.Local).AddTicks(7187), 1, "Pending", null, 0m, 1 },
-                    { 2, null, null, 0, new DateTime(2024, 12, 9, 22, 42, 6, 200, DateTimeKind.Local).AddTicks(7196), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "https://example.com/images/order2.png", false, new DateTime(2024, 12, 9, 22, 42, 6, 200, DateTimeKind.Local).AddTicks(7193), null, 0, new DateTime(2024, 12, 9, 22, 42, 6, 200, DateTimeKind.Local).AddTicks(7195), 1, "Completed", null, 0m, 1 }
+                    { 1, null, "SampleCity", 0, new DateTime(2024, 12, 15, 12, 8, 30, 948, DateTimeKind.Utc).AddTicks(4070), new DateTime(2024, 12, 15, 14, 8, 30, 948, DateTimeKind.Local).AddTicks(4062), false, 123, 0, 1, "Pending", "SampleStreet", 0m, 1 },
+                    { 2, null, "AnotherCity", 0, new DateTime(2024, 12, 15, 12, 8, 30, 948, DateTimeKind.Utc).AddTicks(4074), new DateTime(2024, 12, 15, 14, 8, 30, 948, DateTimeKind.Local).AddTicks(4073), false, 456, 0, 1, "Completed", "AnotherStreet", 0m, 1 }
                 });
 
             migrationBuilder.CreateIndex(

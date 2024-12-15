@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(DALContext))]
-    [Migration("20241209204206_ReOrganozationOfProductAndOrder")]
-    partial class ReOrganozationOfProductAndOrder
+    [Migration("20241215120831_ChangeNumberToInt")]
+    partial class ChangeNumberToInt
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -97,15 +97,15 @@ namespace DAL.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "939b4bbe-78e7-4c69-ad65-06e8e9e759eb",
+                            ConcurrencyStamp = "63aff2a4-d4e6-458a-9bdc-10e3e92d5d04",
                             Email = "itamarherr@gmail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "ITAMARHERR@GMAIL.COM",
                             NormalizedUserName = "ITAMAR",
-                            PasswordHash = "AQAAAAIAAYagAAAAELiFaYeW85jBjP6r6RjQFZL6ilKSjMpaZADdsMBstRGt8J/NAOO7E7kRboVfQkh3dA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEGJN+A4mTh82Lc+JFlsSPCJ4m55GwaZRc2IOKXk2zyny8RgtGMh7BqZJJbEd3MLK2Q==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "107bb758-14ea-4cc5-9ca8-f8b34e23ac23",
+                            SecurityStamp = "87368c32-b35e-4ff2-b1b3-0ccbd3fc366c",
                             TwoFactorEnabled = false,
                             UserName = "Itamar"
                         });
@@ -123,6 +123,7 @@ namespace DAL.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("City")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ConsultancyType")
@@ -135,24 +136,14 @@ namespace DAL.Migrations
                     b.Property<DateTime>("DateForConsultancy")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("IsPrivateArea")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("LastUpdate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Number")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Number")
+                        .HasColumnType("int");
 
                     b.Property<int>("NumberOfTrees")
                         .HasColumnType("int");
-
-                    b.Property<DateTime>("OrderDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
@@ -162,10 +153,11 @@ namespace DAL.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Street")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("TotalPrice")
-                        .HasColumnType("Money");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -182,32 +174,32 @@ namespace DAL.Migrations
                         new
                         {
                             Id = 1,
+                            City = "SampleCity",
                             ConsultancyType = 0,
-                            CreatedAt = new DateTime(2024, 12, 9, 22, 42, 6, 200, DateTimeKind.Local).AddTicks(7188),
-                            DateForConsultancy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ImageUrl = "https://example.com/images/order1.png",
+                            CreatedAt = new DateTime(2024, 12, 15, 12, 8, 30, 948, DateTimeKind.Utc).AddTicks(4070),
+                            DateForConsultancy = new DateTime(2024, 12, 15, 14, 8, 30, 948, DateTimeKind.Local).AddTicks(4062),
                             IsPrivateArea = false,
-                            LastUpdate = new DateTime(2024, 12, 9, 22, 42, 6, 200, DateTimeKind.Local).AddTicks(7183),
+                            Number = 123,
                             NumberOfTrees = 0,
-                            OrderDate = new DateTime(2024, 12, 9, 22, 42, 6, 200, DateTimeKind.Local).AddTicks(7187),
                             ProductId = 1,
                             Status = "Pending",
+                            Street = "SampleStreet",
                             TotalPrice = 0m,
                             UserId = 1
                         },
                         new
                         {
                             Id = 2,
+                            City = "AnotherCity",
                             ConsultancyType = 0,
-                            CreatedAt = new DateTime(2024, 12, 9, 22, 42, 6, 200, DateTimeKind.Local).AddTicks(7196),
-                            DateForConsultancy = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ImageUrl = "https://example.com/images/order2.png",
+                            CreatedAt = new DateTime(2024, 12, 15, 12, 8, 30, 948, DateTimeKind.Utc).AddTicks(4074),
+                            DateForConsultancy = new DateTime(2024, 12, 15, 14, 8, 30, 948, DateTimeKind.Local).AddTicks(4073),
                             IsPrivateArea = false,
-                            LastUpdate = new DateTime(2024, 12, 9, 22, 42, 6, 200, DateTimeKind.Local).AddTicks(7193),
+                            Number = 456,
                             NumberOfTrees = 0,
-                            OrderDate = new DateTime(2024, 12, 9, 22, 42, 6, 200, DateTimeKind.Local).AddTicks(7195),
                             ProductId = 1,
                             Status = "Completed",
+                            Street = "AnotherStreet",
                             TotalPrice = 0m,
                             UserId = 1
                         });
@@ -283,7 +275,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "09249667-b1a0-4b5c-9e8d-b9026e904e5e",
+                            ConcurrencyStamp = "861d4879-30d5-4660-87c1-316e3ef5df25",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         });

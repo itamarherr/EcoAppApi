@@ -16,6 +16,7 @@ namespace DAL.Data
         {
             return await _context.Orders
                 .Include(o => o.User)
+                .Include(o => o.Product)
                 .OrderByDescending(o => o.CreatedAt)
                 .ToListAsync();
         }

@@ -27,7 +27,7 @@ namespace EcoAppApi.Controllers
         public async Task<ActionResult<IEnumerable<OrderDto>>> GetOrders(
       [FromQuery] int page = 1,
       [FromQuery] int pageSize = 10,
-      [FromQuery] string sortBy = "CreateAt",
+      [FromQuery] string sortBy = "CreatedAt",
       [FromQuery] bool descending = true,
       [FromQuery] int? userId = null // Optional filter by user ID
   )
@@ -111,29 +111,52 @@ namespace EcoAppApi.Controllers
         // POST: api/Orders
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<OrderDto>> CreateOrder(CreateOrderDto createDto)
+        public async Task<ActionResult<OrderDto>> CreateOrder([FromBody] CreateOrderDto createDto)
         {
             var user = await _context.Users.FindAsync(createDto.UserId);
             var service = await _context.Products.FindAsync(createDto.ProductId);
 
             if (user == null || service == null)
             {
-                return BadRequest("Invalid User or Product ID.");
+                return BadRequest(new { errors = new[] { "Invalid User or Product ID." } });
             }
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+
+                return BadRequest(new  { errors });
+            }
+
             var order = new Order
             {
                 UserId = createDto.UserId,
                 ProductId = createDto.ProductId,
-                AdditionalNotes = createDto.AdditionalNotes,
+                //ImageUrl = createDto.ImageUrl,
+                AdditionalNotes = createDto.AdditionalNotes,  
                 TotalPrice = createDto.TotalPrice ?? service.Price,
-                CreatedAt = DateTime.Now,
-                LastUpdate = DateTime.Now
+                NumberOfTrees = createDto.NumberOfTrees,
+                City = createDto.City,
+                Street = createDto.Street,
+                Number = createDto.Number,
+                ConsultancyType = createDto.ConsultancyType,
+                IsPrivateArea = createDto.IsPrivateArea,
+                DateForConsultancy = createDto.DateForConsultancy,
+                CreatedAt = DateTime.UtcNow,
+                Product = service,
+                User = user,
+                Status = createDto.Status.ToString(),
+
+                //LastUpdate = DateTime.UtcNow
             };
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetOrder), new { id = order.Id }, order.ToDto());
         }
+       
 
         // DELETE: api/Orders/5
         [HttpDelete("{id}")]

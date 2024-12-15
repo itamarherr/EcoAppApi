@@ -1,4 +1,5 @@
 ﻿using DAL.Data;
+using DAL.enums;
 using DAL.Models;
 using EcoAppApi.DTOs;
 
@@ -22,18 +23,25 @@ public class OrderService : IOrderService
 
     public async Task<Order> createOrderAsync(CreateOrderProductDto orderDto)
     {
+        var user = await _context.Users.FindAsync(orderDto.UserId);
+        var product = await _context.Products.FindAsync(orderDto.ProductId);
+
+        if (user == null || product == null)
+        {
+            throw new ArgumentException("Invalid UserId or ProductId");
+        }
+
 
         var order = new Order
         {
             UserId = orderDto.UserId,
             ProductId = orderDto.ProductId,
             AdditionalNotes = orderDto.AdditionalNotes,
-            TotalPrice = orderDto.TotalPrice = 0, // Default to 0 if not provided
-            OrderDate = DateTime.Now,
-            CreatedAt = DateTime.Now,
-            LastUpdate = DateTime.Now,
-            Status = "pending",
-            ImageUrl = orderDto.ImageUrl
+            TotalPrice = orderDto.TotalPrice ?? product.Price, // Default to Product Price if TotalPrice is null
+            DateForConsultancy = orderDto.DateForConsultancy ?? DateTime.Now,
+            CreatedAt = DateTime.UtcNow,
+            Status = OrderStatus.pending.ToString(), // Use enum for consistency
+            //ImageUrl = orderDto.ImageUrl
         };
 
         _context.Orders.Add(order);
@@ -41,11 +49,28 @@ public class OrderService : IOrderService
         return order;
     }
 
- 
 
 
-    public async Task<List<Order>> GetAllOrdersForadminasync()
+
+    public async Task<List<OrderDto>> GetAllOrdersForAdminAsync()
     {
-        return await _orderRepository.GetAllOrdersForAdminAsync();
+        var orders = await _orderRepository.GetAllOrdersForAdminAsync();
+
+        return orders.Select(order => new OrderDto
+        {
+            Id = order.Id,
+            UserEmail = order.User?.Email ?? "N/A",
+            ServiceType = order.Product?.Name ?? "Unspecified",
+            Status = Enum.TryParse(order.Status, true, out OrderStatus status)
+                ? status
+                : OrderStatus.pending,
+            CreatedAt = order.CreatedAt,
+            AdditionalNotes = order.AdditionalNotes
+        }).ToList();
+    }
+
+    public Task<List<Order>> GetAllOrdersForadminasync()
+    {
+        throw new NotImplementedException();
     }
 }

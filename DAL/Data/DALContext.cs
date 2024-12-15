@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using DAL.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using DAL.enums;
 
 namespace DAL.Data;
 
@@ -27,33 +28,39 @@ public class DALContext(DbContextOptions<DALContext> options) :
             .WithMany(s => s.Orders)
             .HasForeignKey(o => o.ProductId);
 
-            entity.Property(o => o.ImageUrl).IsRequired();
+            //entity.Property(o => o.ImageUrl).IsRequired();
 
             entity.Property(o => o.CreatedAt)
        .HasColumnName("CreatedAt");
 
             entity.HasData(new[]
 {
-                 new Order
-                 {
-                        Id = 1,
-                        UserId = 1,
-                        ProductId = 1,
-                        OrderDate = DateTime.Now,
-                        CreatedAt = DateTime.Now,
-                        Status = "Pending",
-                        ImageUrl = "https://example.com/images/order1.png"
-                  },
-                 new Order
-                 {
-                        Id = 2,
-                        UserId = 1,
-                        ProductId = 1,
-                        OrderDate = DateTime.Now,
-                        CreatedAt = DateTime.Now,
-                        Status = "Completed",
-                        ImageUrl = "https://example.com/images/order2.png"
-                  }
+              new Order
+        {
+            Id = 1,
+            UserId = 1,
+            ProductId = 1,
+           DateForConsultancy = DateTime.Now,
+            CreatedAt = DateTime.UtcNow,
+            Status = "Pending",
+            //ImageUrl = "https://example.com/images/order1.png",
+            City = "SampleCity",  
+            Street = "SampleStreet",
+            Number = 123
+        },
+        new Order
+        {
+            Id = 2,
+            UserId = 1,
+            ProductId = 1,
+            DateForConsultancy = DateTime.Now,
+            CreatedAt = DateTime.UtcNow,
+            Status = "Completed",
+            //ImageUrl = "https://example.com/images/order2.png",
+            City = "AnotherCity", 
+            Street = "AnotherStreet",
+            Number = 456
+        }
 });
 
         });

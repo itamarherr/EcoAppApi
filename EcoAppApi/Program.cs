@@ -65,6 +65,7 @@ namespace ApiExercise
                 option.AddPolicy(name: corsPolicy, policy =>
                 {
                     policy.WithOrigins(
+                       "https://localhost:7129",
                         "http://localhost:3000",
                         "http://localhost:5173",
                         "http://localhost:5174"
@@ -82,10 +83,27 @@ namespace ApiExercise
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+            app.Use(async (context, next) =>
+            {
+                context.Request.EnableBuffering(); // To allow re-reading the request body
+                var body = await new StreamReader(context.Request.Body).ReadToEndAsync();
+                Console.WriteLine($"Request: {body}");
+                context.Request.Body.Position = 0; // Reset stream for further use
 
+                await next();
+
+                Console.WriteLine($"Response Status: {context.Response.StatusCode}");
+            });
             app.UseHttpsRedirection();
 
-
+            app.Use(async (context, next) =>
+            {
+                context.Request.EnableBuffering();
+                var body = await new StreamReader(context.Request.Body).ReadToEndAsync();
+                Console.WriteLine($"Request Body: {body}");
+                context.Request.Body.Position = 0; // Reset stream for the next middleware
+                await next();
+            });
             app.UseCors(corsPolicy);
 
             app.UseAuthentication();

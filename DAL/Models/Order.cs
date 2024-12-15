@@ -19,27 +19,24 @@ public class Order
 
     // Order-specific fields
     public int NumberOfTrees { get; set; }
+    public string City { get; set; }
+    public string Street { get; set; }
+    public int Number { get; set; }
     public Purpose ConsultancyType { get; set; }
-    public string ImageUrl { get; set; }
- 
-    public string? City { get; set; }
-
-    public string? Street { get; set; }
-
-    public string? Number { get; set; }
     public bool IsPrivateArea { get; set; }
 
     [Required]
     public DateTime DateForConsultancy { get; set; }
     public string? AdditionalNotes { get; set; }
-    public DateTime OrderDate { get; set; } = DateTime.Now;
+    //public string ImageUrl { get; set; }
+    //public DateTime OrderDate { get; set; } = DateTime.Now;
     public string Status { get; set; } = "pending";
 
-    // Pricing and metadata
-    [Column(TypeName = "Money")]
+    //// Pricing and metadata
+    //[Column(TypeName = "Money")]
     public decimal TotalPrice { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.Now;
-    public DateTime LastUpdate { get; set; } = DateTime.Now;
+    //public DateTime LastUpdate { get; set; } = DateTime.Now;
 
     
 }
