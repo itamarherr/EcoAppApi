@@ -29,75 +29,79 @@ namespace EcoAppApi.Controllers
             _logger = logger;
         }
 
-  //      // GET: api/Orders
-  //      [HttpGet]
-  //      public async Task<ActionResult<IEnumerable<OrderDto>>> GetOrders(
-  //    [FromQuery] int page = 1,
-  //    [FromQuery] int pageSize = 10,
-  //    [FromQuery] string sortBy = "CreatedAt",
-  //    [FromQuery] bool descending = true,
-  //    [FromQuery] int? userId = null 
-  //)
-  //      {
-  //          try
-  //          {
-  //              if (page <= 0 || pageSize <= 0)
-  //              {
-  //                  return BadRequest(new { message = "Page and pageSize must be greater than zero." });
-  //              }
-
-  //              var validSortFields = new[] { "CreatedAt", "TotalPrice", "Id" };
-  //              if (!validSortFields.Contains(sortBy))
-  //              {
-  //                  return BadRequest(new { message = $"Invalid sort field: {sortBy}" });
-  //              }
-
-  //              var query = _context.Orders
-  //              .Include(o => o.User)
-  //              .AsQueryable();
-
-  //              if (userId.HasValue)
-  //              {
-  //                  query = query.Where(o => o.User.Id == userId.Value);
-  //              }
-  //              var testOrders = await _context.Orders.Take(10).ToListAsync();
-
-
-  //              query = descending
-  //                 ? query.OrderByDescending(o => EF.Property<object>(o, sortBy))
-  //                 : query.OrderBy(o => EF.Property<object>(o, sortBy));
-
-  //              query = query.Skip((page - 1) * pageSize).Take(pageSize);
-  //              var orders = await query.Select(o => new OrderDto
-  //              {
-  //                  Id = o.Id,
-  //                  UserEmail = o.User != null ? o.User.Email : null,
-  //                  TotalPrice = o.TotalPrice,
-  //                  CreatedAt = o.CreatedAt
-  //              }).ToListAsync();
-
-  //              return Ok(orders);
-  //          } catch (Exception ex)
-  //          {
-  //              _logger.LogError(ex, "Failed to fetch orders with params: page={Page}, pageSize={PageSize}, sortBy={SortBy}, descending={Descending}", page, pageSize, sortBy, descending);
-  //              return StatusCode(500, new { message = "Internal server error", details = ex.Message });
-  //          }
-  //      }
+        // GET: api/Orders
         [HttpGet]
-        public async Task<IActionResult> GetSampleOrders()
+        public async Task<ActionResult> GetOrders(
+             [FromQuery] int page = 1,
+             [FromQuery] int pageSize = 20,
+             [FromQuery] string sortBy = "CreatedAt",
+             [FromQuery] bool descending = true,
+             [FromQuery] int? userId = null,
+             [FromQuery] string userEmail = null
+        )
         {
             try
             {
-                // Basic test logic
-                var orders = await _context.Orders.Take(10).ToListAsync();
-                return Ok(orders);
+                if (page <= 0 || pageSize <= 0)
+                    return BadRequest(new { message = "Page and pageSize must be greater than zero." });
+               
+                var validSortFields = new[] { "CreatedAt", "TotalPrice", "Id" };
+                if (!validSortFields.Contains(sortBy, StringComparer.OrdinalIgnoreCase))
+                    return BadRequest(new { message = $"Invalid sort field: {sortBy}" });
+
+
+                var query = _context.Orders
+                .AsNoTracking()
+                .Include(o => o.User)
+                .AsQueryable();
+
+                if (userId.HasValue)
+                    query = query.Where(o => o.User.Id == userId.Value);
+
+                if (!string.IsNullOrEmpty(userEmail))
+                    query = query.Where(o => o.User.Email.Contains(userEmail));
+
+                var totalItems = await query.CountAsync();
+
+                query = descending
+               ? query.OrderByDescending(o => EF.Property<object>(o, sortBy))
+               : query.OrderBy(o => EF.Property<object>(o, sortBy));
+               
+                var orders = await query
+                      .Skip((page - 1) * pageSize)
+                      .Take(pageSize)
+                      .Select(o => new OrderDto
+            {
+                    Id = o.Id,
+                    UserEmail = o.User != null ? o.User.Email : null,
+                    TotalPrice = o.TotalPrice,
+                    CreatedAt = o.CreatedAt
+                }).ToListAsync();
+
+                return Ok( orders );
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Test GetOrders failed");
+                _logger.LogError(ex, "Failed to fetch orders with params: page={Page}, pageSize={PageSize}, sortBy={SortBy}, descending={Descending}",
+                    page, pageSize, sortBy, descending, userId, userEmail);
                 return StatusCode(500, new { message = "Internal server error", details = ex.Message });
             }
         }
+        //[HttpGet]
+        //public async Task<IActionResult> GetSampleOrders()
+        //{
+        //    try
+        //    {
+        //        // Basic test logic
+        //        var orders = await _context.Orders.Take(10).ToListAsync();
+        //        return Ok(orders);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Test GetOrders failed");
+        //        return StatusCode(500, new { message = "Internal server error", details = ex.Message });
+        //    }
+        //}
         // GET: api/Orders/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Order>> GetOrder(int id)
