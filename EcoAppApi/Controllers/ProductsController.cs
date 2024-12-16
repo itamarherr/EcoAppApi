@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using DAL.Data;
-using ApiExercise.DTOs;
+using EcoAppApi.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using DAL.Models;
 
-namespace ApiExercise.Controllers;
+namespace EcoAppApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]

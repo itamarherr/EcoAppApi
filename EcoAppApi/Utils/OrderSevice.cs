@@ -20,7 +20,6 @@ public class OrderService : IOrderService
         _pricingService = pricingService;
         _context = context;
     }
-
     public async Task<Order> createOrderAsync(CreateOrderProductDto orderDto)
     {
         var user = await _context.Users.FindAsync(orderDto.UserId);
@@ -30,7 +29,6 @@ public class OrderService : IOrderService
         {
             throw new ArgumentException("Invalid UserId or ProductId");
         }
-
 
         var order = new Order
         {
@@ -48,8 +46,6 @@ public class OrderService : IOrderService
         await _context.SaveChangesAsync();
         return order;
     }
-
-
 
 
     public async Task<List<OrderDto>> GetAllOrdersForAdminAsync()
@@ -72,5 +68,23 @@ public class OrderService : IOrderService
     public Task<List<Order>> GetAllOrdersForadminasync()
     {
         throw new NotImplementedException();
+    }
+
+    public async Task<OrderDto> UpdateOrderAsync(int id, UpdateOrderDto orderDto)
+    {
+        var order = await _context.Orders.FindAsync(id);
+        if (order == null)
+        {
+            throw new KeyNotFoundException("Order not found");
+        }
+
+        order.Status = orderDto.Status ?? order.Status;
+        order.TotalPrice = orderDto.TotalPrice ?? order.TotalPrice;
+        order.AdditionalNotes = orderDto.AdditionalNotes ?? order.AdditionalNotes;
+        order.DateForConsultancy = orderDto.DateForConsultancy ?? order.DateForConsultancy;
+        // Update other fields similarly
+        await _context.SaveChangesAsync();
+
+        return order.ToDto();
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ApiExercise.DTOs
+namespace EcoAppApi.DTOs
 {
     public class LoginDto
     {

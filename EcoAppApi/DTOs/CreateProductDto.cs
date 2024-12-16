@@ -1,9 +1,9 @@
-﻿using ApiExercise.DTOs;
+﻿using EcoAppApi.DTOs;
 using DAL.Models;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.ComponentModel.DataAnnotations;
 
-namespace ApiExercise.DTOs
+namespace EcoAppApi.DTOs
 {
     public class CreateProductDto
     {

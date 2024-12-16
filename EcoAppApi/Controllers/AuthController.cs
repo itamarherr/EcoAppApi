@@ -1,11 +1,11 @@
-﻿using ApiExercise.DTOs;
-using ApiExercise.Services;
+﻿using EcoAppApi.DTOs;
+using EcoAppApi.Utils;
 using DAL.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ApiExercise.Controllers
+namespace EcoAppApi.Controllers
 {
     [Route("Api/[controller]")]
     [ApiController]

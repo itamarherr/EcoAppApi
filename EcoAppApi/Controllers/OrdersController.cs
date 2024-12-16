@@ -8,6 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using DAL.Data;
 using DAL.Models;
 using EcoAppApi.DTOs;
+using DAL.enums;
+using Newtonsoft.Json;
+using EcoAppApi.Utils;
 
 namespace EcoAppApi.Controllers
 {
@@ -16,50 +19,84 @@ namespace EcoAppApi.Controllers
     public class OrdersController : ControllerBase
     {
         private readonly DALContext _context;
+        private readonly IOrderService _orderService;
+        private readonly ILogger<OrdersController> _logger;
 
-        public OrdersController(DALContext context)
+        public OrdersController(DALContext context, IOrderService orderService, ILogger<OrdersController> logger)
         {
             _context = context;
+            _orderService = orderService;
+            _logger = logger;
         }
 
-        // GET: api/Orders
+  //      // GET: api/Orders
+  //      [HttpGet]
+  //      public async Task<ActionResult<IEnumerable<OrderDto>>> GetOrders(
+  //    [FromQuery] int page = 1,
+  //    [FromQuery] int pageSize = 10,
+  //    [FromQuery] string sortBy = "CreatedAt",
+  //    [FromQuery] bool descending = true,
+  //    [FromQuery] int? userId = null 
+  //)
+  //      {
+  //          try
+  //          {
+  //              if (page <= 0 || pageSize <= 0)
+  //              {
+  //                  return BadRequest(new { message = "Page and pageSize must be greater than zero." });
+  //              }
+
+  //              var validSortFields = new[] { "CreatedAt", "TotalPrice", "Id" };
+  //              if (!validSortFields.Contains(sortBy))
+  //              {
+  //                  return BadRequest(new { message = $"Invalid sort field: {sortBy}" });
+  //              }
+
+  //              var query = _context.Orders
+  //              .Include(o => o.User)
+  //              .AsQueryable();
+
+  //              if (userId.HasValue)
+  //              {
+  //                  query = query.Where(o => o.User.Id == userId.Value);
+  //              }
+  //              var testOrders = await _context.Orders.Take(10).ToListAsync();
+
+
+  //              query = descending
+  //                 ? query.OrderByDescending(o => EF.Property<object>(o, sortBy))
+  //                 : query.OrderBy(o => EF.Property<object>(o, sortBy));
+
+  //              query = query.Skip((page - 1) * pageSize).Take(pageSize);
+  //              var orders = await query.Select(o => new OrderDto
+  //              {
+  //                  Id = o.Id,
+  //                  UserEmail = o.User != null ? o.User.Email : null,
+  //                  TotalPrice = o.TotalPrice,
+  //                  CreatedAt = o.CreatedAt
+  //              }).ToListAsync();
+
+  //              return Ok(orders);
+  //          } catch (Exception ex)
+  //          {
+  //              _logger.LogError(ex, "Failed to fetch orders with params: page={Page}, pageSize={PageSize}, sortBy={SortBy}, descending={Descending}", page, pageSize, sortBy, descending);
+  //              return StatusCode(500, new { message = "Internal server error", details = ex.Message });
+  //          }
+  //      }
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<OrderDto>>> GetOrders(
-      [FromQuery] int page = 1,
-      [FromQuery] int pageSize = 10,
-      [FromQuery] string sortBy = "CreatedAt",
-      [FromQuery] bool descending = true,
-      [FromQuery] int? userId = null // Optional filter by user ID
-  )
+        public async Task<IActionResult> GetSampleOrders()
         {
-            var query = _context.Orders
-                .Include(o => o.User) // Include related User data
-                .AsQueryable();
-
-            // Apply filtering (optional)
-            if (userId.HasValue)
+            try
             {
-                query = query.Where(o => o.User.Id == userId.Value);
+                // Basic test logic
+                var orders = await _context.Orders.Take(10).ToListAsync();
+                return Ok(orders);
             }
-
-            // Apply sorting
-            query = descending
-                ? query.OrderByDescending(o => EF.Property<object>(o, sortBy))
-                : query.OrderBy(o => EF.Property<object>(o, sortBy));
-
-            // Apply pagination
-            query = query.Skip((page - 1) * pageSize).Take(pageSize);
-
-            // Execute query and return result
-            var orders = await query.Select(o => new OrderDto
+            catch (Exception ex)
             {
-                Id = o.Id,
-               /* Name = o.Name,*/ // Assuming you want to include these fields
-                TotalPrice = o.TotalPrice,
-                CreatedAt = o.CreatedAt
-            }).ToListAsync();
-
-            return Ok(orders);
+                _logger.LogError(ex, "Test GetOrders failed");
+                return StatusCode(500, new { message = "Internal server error", details = ex.Message });
+            }
         }
         // GET: api/Orders/5
         [HttpGet("{id}")]
@@ -73,39 +110,28 @@ namespace EcoAppApi.Controllers
             {
                 return NotFound();
             }
-
-            return order;
+            var response = new OrderResponseDto
+            {
+                IsPrivateArea = order.IsPrivateArea,
+                // Map other properties
+            };
+            return Ok(response);
         }
 
         // PUT: api/Orders/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutOrder(int id, Order order)
+        public async Task<IActionResult> UpdateOrder(int id, [FromBody] UpdateOrderDto orderDto)
         {
-            if (id != order.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(order).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                var updatedOrder = await _orderService.UpdateOrderAsync(id, orderDto);
+                return Ok(updatedOrder);
             }
-            catch (DbUpdateConcurrencyException)
+            catch (KeyNotFoundException ex)
             {
-                if (!OrderExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return NotFound(ex.Message);
             }
-
-            return NoContent();
         }
 
         // POST: api/Orders
@@ -129,6 +155,10 @@ namespace EcoAppApi.Controllers
 
                 return BadRequest(new  { errors });
             }
+            if (!Enum.IsDefined(typeof(Purpose), createDto.ConsultancyType))
+            {
+                return BadRequest("Invalid Consultancy Type.");
+            }
 
             var order = new Order
             {
@@ -141,7 +171,7 @@ namespace EcoAppApi.Controllers
                 City = createDto.City,
                 Street = createDto.Street,
                 Number = createDto.Number,
-                ConsultancyType = createDto.ConsultancyType,
+                ConsultancyType = (Purpose)createDto.ConsultancyType,
                 IsPrivateArea = createDto.IsPrivateArea,
                 DateForConsultancy = createDto.DateForConsultancy,
                 CreatedAt = DateTime.UtcNow,

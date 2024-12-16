@@ -4,7 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-namespace ApiExercise.Services;
+namespace EcoAppApi.Utils;
 
 public class JwtUtils(IConfiguration configuration, UserManager<AppUser> userManager)
 {

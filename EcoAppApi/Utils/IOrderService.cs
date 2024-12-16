@@ -7,5 +7,7 @@ namespace EcoAppApi.Utils
     {
         Task<Order> createOrderAsync(CreateOrderProductDto orderDto);
         Task<List<Order>> GetAllOrdersForadminasync();
+
+        Task<OrderDto> UpdateOrderAsync(int id, UpdateOrderDto orderDto);
     }
 }

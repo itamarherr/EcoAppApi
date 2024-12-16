@@ -1,16 +1,17 @@
 
-using ApiExercise.Services;
+using EcoAppApi.Utils;
 using DAL.Data;
 using DAL.Models;
-using EcoAppApi.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using EcoAppApi.Utils;
+using EcoAppApi.Controllers;
+using Microsoft.Extensions.Logging; 
 
-namespace ApiExercise
+namespace EcoAppApi
 {
     public class Program
     {
@@ -50,14 +51,17 @@ namespace ApiExercise
             builder.Services.AddScoped<IOrderRepository, OrderRepository>();
             builder.Services.AddScoped<IOrderService, OrderService>();
             builder.Services.AddScoped<PricingService>();
-
-
             builder.Services.AddScoped<JwtUtils>();
 
+            builder.Services.AddLogging();
             builder.Services.AddControllers();
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Logging.AddConsole();
+
             var corsPolicy = "CorsPolicy";
 
             builder.Services.AddCors(option =>
@@ -75,34 +79,26 @@ namespace ApiExercise
                 });
             });
             var app = builder.Build();
+            var logger = app.Logger;
 
 
             // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
-            app.Use(async (context, next) =>
-            {
-                context.Request.EnableBuffering(); // To allow re-reading the request body
-                var body = await new StreamReader(context.Request.Body).ReadToEndAsync();
-                Console.WriteLine($"Request: {body}");
-                context.Request.Body.Position = 0; // Reset stream for further use
-
-                await next();
-
-                Console.WriteLine($"Response Status: {context.Response.StatusCode}");
-            });
+          
             app.UseHttpsRedirection();
 
             app.Use(async (context, next) =>
             {
                 context.Request.EnableBuffering();
                 var body = await new StreamReader(context.Request.Body).ReadToEndAsync();
-                Console.WriteLine($"Request Body: {body}");
+                logger.LogInformation($"Request Body: {body}");
                 context.Request.Body.Position = 0; // Reset stream for the next middleware
                 await next();
+            });
+            app.Use(async (context, next) =>
+            {
+                logger.LogInformation("Request: {Method} {Path}", context.Request.Method, context.Request.Path);
+                await next();
+                logger.LogInformation("Response: {StatusCode}", context.Response.StatusCode);
             });
             app.UseCors(corsPolicy);
 
@@ -110,7 +106,11 @@ namespace ApiExercise
 
             app.UseAuthorization();
 
-
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
             app.MapControllers();
 
             app.Run();

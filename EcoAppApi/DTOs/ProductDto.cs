@@ -1,6 +1,6 @@
 ﻿using DAL.Models;
 
-namespace ApiExercise.DTOs;
+namespace EcoAppApi.DTOs;
 
 public class ProductDto
 {

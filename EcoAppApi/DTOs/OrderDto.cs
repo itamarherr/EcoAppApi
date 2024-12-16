@@ -19,7 +19,7 @@ namespace EcoAppApi.DTOs
         public string City { get; set; }
         public string Street { get; set; }
         public int Number { get; set; }
-        public Purpose ConsultancyType { get; set; }
+        public int ConsultancyType { get; set; }
         public bool IsPrivateArea { get; set; }
         public DateTime DateForConsultancy { get; set; }
         public string? AdditionalNotes { get; set; }
@@ -43,7 +43,7 @@ namespace EcoAppApi.DTOs
                 City = order.City,
                 Street = order.Street,
                 Number = order.Number,
-                ConsultancyType = order.ConsultancyType,
+                ConsultancyType = (int)order.ConsultancyType,
                 IsPrivateArea = order.IsPrivateArea,
                 DateForConsultancy = order.DateForConsultancy,
                 AdditionalNotes = order.AdditionalNotes,

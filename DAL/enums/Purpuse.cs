@@ -5,9 +5,9 @@ namespace DAL.enums;
 public enum Purpose
 {
     [Display(Name = "Before Construction")]
-    BeforeConstruction,
+    BeforeConstruction = 1 ,
     [Display(Name = "Dislocations")]
-    Dislocations,
+    Dislocations = 2,
     [Display(Name = "Trees Illness")]
-    TreesIllness
+    TreesIllness = 3
 }
