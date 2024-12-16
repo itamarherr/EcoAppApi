@@ -114,10 +114,11 @@ namespace EcoAppApi.Controllers
             {
                 return NotFound();
             }
-            var response = new OrderResponseDto
+            var response = new
             {
-                IsPrivateArea = order.IsPrivateArea,
-                // Map other properties
+                order.Id,
+                UserEmail = order.User != null ? order.User.Email : null,
+                order.CreatedAt
             };
             return Ok(response);
         }
