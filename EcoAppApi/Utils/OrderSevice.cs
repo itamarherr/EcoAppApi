@@ -2,22 +2,23 @@
 using DAL.enums;
 using DAL.Models;
 using EcoAppApi.DTOs;
+using Microsoft.OpenApi.Extensions;
 
 namespace EcoAppApi.Utils;
 
 public class OrderService : IOrderService
 {
     private readonly IOrderRepository _orderRepository;
-    private readonly PricingService _pricingService;
+    //private readonly PricingService _pricingService;
     private readonly DALContext _context;
 
     public OrderService(
         IOrderRepository orderRepository,
-        PricingService pricingService,
+        //PricingService pricingService,
         DALContext context)
     {
         _orderRepository = orderRepository;
-        _pricingService = pricingService;
+        //_pricingService = pricingService;
         _context = context;
     }
     public async Task<Order> createOrderAsync(CreateOrderProductDto orderDto)
@@ -38,7 +39,7 @@ public class OrderService : IOrderService
             TotalPrice = orderDto.TotalPrice ?? product.Price, // Default to Product Price if TotalPrice is null
             DateForConsultancy = orderDto.DateForConsultancy ?? DateTime.Now,
             CreatedAt = DateTime.UtcNow,
-            Status = OrderStatus.pending.ToString(), // Use enum for consistency
+            //StatusType = orderDto.StatusType 
             //ImageUrl = orderDto.ImageUrl
         };
 
@@ -57,9 +58,8 @@ public class OrderService : IOrderService
             Id = order.Id,
             UserEmail = order.User?.Email ?? "N/A",
             ServiceType = order.Product?.Name ?? "Unspecified",
-            Status = Enum.TryParse(order.Status, true, out OrderStatus status)
-                ? status
-                : OrderStatus.pending,
+            StatusType = order.StatusType,
+            
             CreatedAt = order.CreatedAt,
             AdditionalNotes = order.AdditionalNotes
         }).ToList();
@@ -78,7 +78,7 @@ public class OrderService : IOrderService
             throw new KeyNotFoundException("Order not found");
         }
 
-        order.Status = orderDto.Status ?? order.Status;
+        order.StatusType = order.StatusType;
         order.TotalPrice = orderDto.TotalPrice ?? order.TotalPrice;
         order.AdditionalNotes = orderDto.AdditionalNotes ?? order.AdditionalNotes;
         order.DateForConsultancy = orderDto.DateForConsultancy ?? order.DateForConsultancy;

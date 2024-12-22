@@ -11,6 +11,11 @@ using EcoAppApi.DTOs;
 using DAL.enums;
 using Newtonsoft.Json;
 using EcoAppApi.Utils;
+using Microsoft.AspNetCore.Authorization;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.IdentityModel.Tokens;
 
 namespace EcoAppApi.Controllers
 {
@@ -87,21 +92,7 @@ namespace EcoAppApi.Controllers
                 return StatusCode(500, new { message = "Internal server error", details = ex.Message });
             }
         }
-        //[HttpGet]
-        //public async Task<IActionResult> GetSampleOrders()
-        //{
-        //    try
-        //    {
-        //        // Basic test logic
-        //        var orders = await _context.Orders.Take(10).ToListAsync();
-        //        return Ok(orders);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, "Test GetOrders failed");
-        //        return StatusCode(500, new { message = "Internal server error", details = ex.Message });
-        //    }
-        //}
+      
         // GET: api/Orders/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Order>> GetOrder(int id)
@@ -123,6 +114,51 @@ namespace EcoAppApi.Controllers
             return Ok(response);
         }
 
+        [Authorize]
+        [HttpGet("my-orders")]
+        public async Task<ActionResult<OrderDto>> GetCurrentUserOrders()
+        {
+ 
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+    
+            if (string.IsNullOrEmpty(userIdClaim) )
+            {
+                return Unauthorized(new { error = "User is not authenticated." });
+            }
+            if(!int.TryParse(userIdClaim, out int userId))
+            {
+                return BadRequest(new { error = "Invalid User ID in token." });
+            }
+
+            var userOrders = await _context.Orders
+                .Where(o => o.UserId == userId)
+              .OrderByDescending(o => o.CreatedAt)
+                .Select(o => new OrderDto
+                {
+                    Id = o.Id,
+                    UserId = userIdClaim,
+                    UserName = o.User.UserName,
+                    CreatedAt = o.CreatedAt,
+                    ServiceType = o.Product.Name,  // Assuming this comes from Product
+          
+                    City = o.City,
+                    Street = o.Street,
+                    Number = o.Number,
+                    ConsultancyType = o.ConsultancyType,
+                    StatusType = o.StatusType,
+                    IsPrivateArea = o.IsPrivateArea,
+                    DateForConsultancy = o.DateForConsultancy,
+                    AdditionalNotes = o.AdditionalNotes,
+
+                    TotalPrice = o.TotalPrice,
+                    UserEmail = o.User.Email,
+                    //AdminNotes = o.AdminNotes
+                })
+                .FirstOrDefaultAsync();
+
+            return Ok(userOrders);
+ 
+        }
         // PUT: api/Orders/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -160,10 +196,10 @@ namespace EcoAppApi.Controllers
 
                 return BadRequest(new  { errors });
             }
-            if (!Enum.IsDefined(typeof(Purpose), createDto.ConsultancyType))
-            {
-                return BadRequest("Invalid Consultancy Type.");
-            }
+            //if (!Enum.IsDefined(typeof(Purpose), createDto.ConsultancyType))
+            //{
+            //    return BadRequest("Invalid Consultancy Type.");
+            //}
 
             var order = new Order
             {
@@ -182,7 +218,7 @@ namespace EcoAppApi.Controllers
                 CreatedAt = DateTime.UtcNow,
                 Product = service,
                 User = user,
-                Status = createDto.Status.ToString(),
+                StatusType = createDto.Status,
 
                 //LastUpdate = DateTime.UtcNow
             };

@@ -12,24 +12,29 @@ namespace EcoAppApi.DTOs
     public class OrderDto
     {
         public int Id { get; set; }
+        public string UserId { get; set; }
         public string UserName { get; set; }
         public DateTime CreatedAt { get; set; }
         public string ServiceType { get; set; }
-        public OrderStatus Status { get; set; }
+        public OrderStatus StatusType { get; set; }
         public string City { get; set; }
         public string Street { get; set; }
         public int Number { get; set; }
-        public int ConsultancyType { get; set; }
+        public Purpose ConsultancyType { get; set; }
+
         public bool IsPrivateArea { get; set; }
         public DateTime DateForConsultancy { get; set; }
         public string? AdditionalNotes { get; set; }
-        public string ImageUrl { get; set; }
+        //public string ImageUrl { get; set; }
         public decimal TotalPrice { get; set; }
 
         // Additional admin-specific information
         public string UserEmail { get; set; }
         public string AdminNotes { get; set; }
+        public string ConsultancyTypeString => Enum.GetName(typeof(Purpose), ConsultancyType) ?? "Unknown";
+        public string StatusTypeString => Enum.GetName(typeof(OrderStatus), StatusType) ?? "Pending";
     }
+
 
     public static class OrderExtantion
     {
@@ -43,7 +48,7 @@ namespace EcoAppApi.DTOs
                 City = order.City,
                 Street = order.Street,
                 Number = order.Number,
-                ConsultancyType = (int)order.ConsultancyType,
+                ConsultancyType = order.ConsultancyType,
                 IsPrivateArea = order.IsPrivateArea,
                 DateForConsultancy = order.DateForConsultancy,
                 AdditionalNotes = order.AdditionalNotes,
@@ -53,9 +58,8 @@ namespace EcoAppApi.DTOs
                 //ImageUrl = order.ImageUrl,
                 UserEmail = order.User?.Email ?? "N/A", // Assuming AppUser has an Email property
                 AdminNotes = order.AdditionalNotes,
-                Status = Enum.TryParse(order.Status, true, out OrderStatus status)
-                 ? status
-                 : OrderStatus.pending
+                StatusType = order.StatusType 
+               
             };
         }
     }

@@ -33,8 +33,8 @@ public class DALContext(DbContextOptions<DALContext> options) :
             entity.Property(o => o.CreatedAt)
        .HasColumnName("CreatedAt");
 
-            entity.HasData(new[]
-{
+            entity.HasData(new[] {
+
               new Order
         {
             Id = 1,
@@ -42,9 +42,9 @@ public class DALContext(DbContextOptions<DALContext> options) :
             ProductId = 1,
            DateForConsultancy = DateTime.Now,
             CreatedAt = DateTime.UtcNow,
-            Status = "Pending",
+            //StatusType = "pending",
             //ImageUrl = "https://example.com/images/order1.png",
-            City = "SampleCity",  
+            City = "SampleCity",
             Street = "SampleStreet",
             Number = 123
         },
@@ -55,13 +55,13 @@ public class DALContext(DbContextOptions<DALContext> options) :
             ProductId = 1,
             DateForConsultancy = DateTime.Now,
             CreatedAt = DateTime.UtcNow,
-            Status = "Completed",
+            //StatusType = "completed",
             //ImageUrl = "https://example.com/images/order2.png",
-            City = "AnotherCity", 
+            City = "AnotherCity",
             Street = "AnotherStreet",
             Number = 456
         }
-});
+                        });
 
         });
 
@@ -73,11 +73,11 @@ public class DALContext(DbContextOptions<DALContext> options) :
                         Name = "Oak Consultancy",
                         Description = "Comprehensive assessment and consultation for oaks ",
                         Price = 1000.0M,
-                     
+
                 },
             });
 
-       
+
         var hasher = new PasswordHasher<AppUser>();
         modelBuilder.Entity<IdentityRole<int>>()
             .HasData(new[] {

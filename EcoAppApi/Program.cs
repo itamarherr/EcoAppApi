@@ -9,7 +9,9 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using EcoAppApi.Utils;
 using EcoAppApi.Controllers;
-using Microsoft.Extensions.Logging; 
+using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
+using System.Text.Json.Serialization;
 
 namespace EcoAppApi
 {
@@ -28,7 +30,11 @@ namespace EcoAppApi
                 options.Password.RequiredLength = 8;
 
             }).AddEntityFrameworkStores<DALContext>();
-
+            builder.Services.AddControllers()
+            .AddJsonOptions(options =>
+            {
+            options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+             });
             //JWT Setup:
             var jwtSettings = builder.Configuration.GetSection("JWTSettings");
             builder.Services.AddAuthentication(options =>
@@ -38,19 +44,31 @@ namespace EcoAppApi
             }).AddJwtBearer(options =>
             {
                 options.TokenValidationParameters = new TokenValidationParameters
-                { 
+                {
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidIssuer = jwtSettings["Issuer"],
                     ValidAudience = jwtSettings["Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["SecretKey"])),
+                    ClockSkew = TimeSpan.Zero
+                };
+                options.MapInboundClaims = false;
+                options.Events = new JwtBearerEvents
+                {
+                    OnAuthenticationFailed = context =>
+                    {
+                        string sanitizedMessage = context.Exception.Message.Replace("\r", "").Replace("\n", "").Trim();
+                        context.NoResult();
+                        context.Response.Headers.Add("Token-Error", sanitizedMessage);
+                        return Task.CompletedTask;
+                    }
                 };
             });
 
             builder.Services.AddScoped<ProductsRepository>();
             builder.Services.AddScoped<IOrderRepository, OrderRepository>();
             builder.Services.AddScoped<IOrderService, OrderService>();
-            builder.Services.AddScoped<PricingService>();
+          /*  builder.Services.AddScoped<PricingService>()*/;
             builder.Services.AddScoped<JwtUtils>();
 
             builder.Services.AddLogging();
@@ -58,8 +76,31 @@ namespace EcoAppApi
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Please enter JWT with Bearer into field",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey
+                });
 
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
+            });
             builder.Logging.AddConsole();
 
             var corsPolicy = "CorsPolicy";
@@ -83,7 +124,7 @@ namespace EcoAppApi
 
 
             // Configure the HTTP request pipeline.
-          
+
             app.UseHttpsRedirection();
 
             app.Use(async (context, next) =>

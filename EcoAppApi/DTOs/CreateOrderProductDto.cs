@@ -19,7 +19,7 @@ public class CreateOrderProductDto
     [Required]
     public int Number { get; set; }
     //public string ImageUrl { get; set; }
-    public Purpose ConsultancyType { get; set; }
+    public int ConsultancyType { get; set; }
     public bool IsPrivateArea { get; set; }
     public DateTime? DateForConsultancy { get; set; }
     public bool Editing { get; set; }

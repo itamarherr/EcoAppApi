@@ -30,7 +30,7 @@ public class Order
     public string? AdditionalNotes { get; set; }
     //public string ImageUrl { get; set; }
     //public DateTime OrderDate { get; set; } = DateTime.Now;
-    public string Status { get; set; } = "pending";
+    public OrderStatus StatusType { get; set; }
 
     //// Pricing and metadata
     //[Column(TypeName = "Money")]

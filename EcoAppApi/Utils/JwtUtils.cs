@@ -17,10 +17,15 @@ public class JwtUtils(IConfiguration configuration, UserManager<AppUser> userMan
         //JWT is a collection of claims
         var claims = new List<Claim>()
         {
-            new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
-            new Claim(JwtRegisteredClaimNames.Email, user.Email),
+        
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                //new Claim(ClaimTypes.Name, user.UserName),
+            //new Claim(JwtRegisteredClaimNames.Email, user.Email),
         };
-
+        foreach (var claim in claims)
+        {
+            Console.WriteLine($"{claim.Type}: {claim.Value}");
+        }
         var isAdmin = await userManager.IsInRoleAsync(user, "admin");
 
         if (isAdmin)

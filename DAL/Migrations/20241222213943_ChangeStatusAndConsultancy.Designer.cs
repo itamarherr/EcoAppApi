@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(DALContext))]
-    [Migration("20241215120831_ChangeNumberToInt")]
-    partial class ChangeNumberToInt
+    [Migration("20241222213943_ChangeStatusAndConsultancy")]
+    partial class ChangeStatusAndConsultancy
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -97,15 +97,15 @@ namespace DAL.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "63aff2a4-d4e6-458a-9bdc-10e3e92d5d04",
+                            ConcurrencyStamp = "ad9994d2-a76f-446a-800c-febe5a930d5f",
                             Email = "itamarherr@gmail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "ITAMARHERR@GMAIL.COM",
                             NormalizedUserName = "ITAMAR",
-                            PasswordHash = "AQAAAAIAAYagAAAAEGJN+A4mTh82Lc+JFlsSPCJ4m55GwaZRc2IOKXk2zyny8RgtGMh7BqZJJbEd3MLK2Q==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEFQMVIT6YdINI7CY6pYik5e29agS14GnEwhaJk+PrhdKsqLGe03O6gBnPQqeAcGPhg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "87368c32-b35e-4ff2-b1b3-0ccbd3fc366c",
+                            SecurityStamp = "e8c4ee0a-d00b-43d6-8df3-572905f5b909",
                             TwoFactorEnabled = false,
                             UserName = "Itamar"
                         });
@@ -148,9 +148,8 @@ namespace DAL.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("StatusType")
+                        .HasColumnType("int");
 
                     b.Property<string>("Street")
                         .IsRequired()
@@ -176,13 +175,13 @@ namespace DAL.Migrations
                             Id = 1,
                             City = "SampleCity",
                             ConsultancyType = 0,
-                            CreatedAt = new DateTime(2024, 12, 15, 12, 8, 30, 948, DateTimeKind.Utc).AddTicks(4070),
-                            DateForConsultancy = new DateTime(2024, 12, 15, 14, 8, 30, 948, DateTimeKind.Local).AddTicks(4062),
+                            CreatedAt = new DateTime(2024, 12, 22, 21, 39, 42, 695, DateTimeKind.Utc).AddTicks(9225),
+                            DateForConsultancy = new DateTime(2024, 12, 22, 23, 39, 42, 695, DateTimeKind.Local).AddTicks(9223),
                             IsPrivateArea = false,
                             Number = 123,
                             NumberOfTrees = 0,
                             ProductId = 1,
-                            Status = "Pending",
+                            StatusType = 0,
                             Street = "SampleStreet",
                             TotalPrice = 0m,
                             UserId = 1
@@ -192,13 +191,13 @@ namespace DAL.Migrations
                             Id = 2,
                             City = "AnotherCity",
                             ConsultancyType = 0,
-                            CreatedAt = new DateTime(2024, 12, 15, 12, 8, 30, 948, DateTimeKind.Utc).AddTicks(4074),
-                            DateForConsultancy = new DateTime(2024, 12, 15, 14, 8, 30, 948, DateTimeKind.Local).AddTicks(4073),
+                            CreatedAt = new DateTime(2024, 12, 22, 21, 39, 42, 695, DateTimeKind.Utc).AddTicks(9230),
+                            DateForConsultancy = new DateTime(2024, 12, 22, 23, 39, 42, 695, DateTimeKind.Local).AddTicks(9229),
                             IsPrivateArea = false,
                             Number = 456,
                             NumberOfTrees = 0,
                             ProductId = 1,
-                            Status = "Completed",
+                            StatusType = 0,
                             Street = "AnotherStreet",
                             TotalPrice = 0m,
                             UserId = 1
@@ -275,7 +274,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "861d4879-30d5-4660-87c1-316e3ef5df25",
+                            ConcurrencyStamp = "0c500b3b-2ecf-4213-b7a9-33474520af21",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         });

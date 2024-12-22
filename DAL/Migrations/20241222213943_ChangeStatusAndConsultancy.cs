@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DAL.Migrations
 {
     /// <inheritdoc />
-    public partial class ChangeNumberToInt : Migration
+    public partial class ChangeStatusAndConsultancy : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -192,7 +192,7 @@ namespace DAL.Migrations
                     IsPrivateArea = table.Column<bool>(type: "bit", nullable: false),
                     DateForConsultancy = table.Column<DateTime>(type: "datetime2", nullable: false),
                     AdditionalNotes = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    StatusType = table.Column<int>(type: "int", nullable: false),
                     TotalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -216,12 +216,12 @@ namespace DAL.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { 1, "861d4879-30d5-4660-87c1-316e3ef5df25", "admin", "ADMIN" });
+                values: new object[] { 1, "0c500b3b-2ecf-4213-b7a9-33474520af21", "admin", "ADMIN" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { 1, 0, "63aff2a4-d4e6-458a-9bdc-10e3e92d5d04", "itamarherr@gmail.com", false, false, null, "ITAMARHERR@GMAIL.COM", "ITAMAR", "AQAAAAIAAYagAAAAEGJN+A4mTh82Lc+JFlsSPCJ4m55GwaZRc2IOKXk2zyny8RgtGMh7BqZJJbEd3MLK2Q==", null, false, "87368c32-b35e-4ff2-b1b3-0ccbd3fc366c", false, "Itamar" });
+                values: new object[] { 1, 0, "ad9994d2-a76f-446a-800c-febe5a930d5f", "itamarherr@gmail.com", false, false, null, "ITAMARHERR@GMAIL.COM", "ITAMAR", "AQAAAAIAAYagAAAAEFQMVIT6YdINI7CY6pYik5e29agS14GnEwhaJk+PrhdKsqLGe03O6gBnPQqeAcGPhg==", null, false, "e8c4ee0a-d00b-43d6-8df3-572905f5b909", false, "Itamar" });
 
             migrationBuilder.InsertData(
                 table: "Products",
@@ -235,11 +235,11 @@ namespace DAL.Migrations
 
             migrationBuilder.InsertData(
                 table: "Orders",
-                columns: new[] { "Id", "AdditionalNotes", "City", "ConsultancyType", "CreatedAt", "DateForConsultancy", "IsPrivateArea", "Number", "NumberOfTrees", "ProductId", "Status", "Street", "TotalPrice", "UserId" },
+                columns: new[] { "Id", "AdditionalNotes", "City", "ConsultancyType", "CreatedAt", "DateForConsultancy", "IsPrivateArea", "Number", "NumberOfTrees", "ProductId", "StatusType", "Street", "TotalPrice", "UserId" },
                 values: new object[,]
                 {
-                    { 1, null, "SampleCity", 0, new DateTime(2024, 12, 15, 12, 8, 30, 948, DateTimeKind.Utc).AddTicks(4070), new DateTime(2024, 12, 15, 14, 8, 30, 948, DateTimeKind.Local).AddTicks(4062), false, 123, 0, 1, "Pending", "SampleStreet", 0m, 1 },
-                    { 2, null, "AnotherCity", 0, new DateTime(2024, 12, 15, 12, 8, 30, 948, DateTimeKind.Utc).AddTicks(4074), new DateTime(2024, 12, 15, 14, 8, 30, 948, DateTimeKind.Local).AddTicks(4073), false, 456, 0, 1, "Completed", "AnotherStreet", 0m, 1 }
+                    { 1, null, "SampleCity", 0, new DateTime(2024, 12, 22, 21, 39, 42, 695, DateTimeKind.Utc).AddTicks(9225), new DateTime(2024, 12, 22, 23, 39, 42, 695, DateTimeKind.Local).AddTicks(9223), false, 123, 0, 1, 0, "SampleStreet", 0m, 1 },
+                    { 2, null, "AnotherCity", 0, new DateTime(2024, 12, 22, 21, 39, 42, 695, DateTimeKind.Utc).AddTicks(9230), new DateTime(2024, 12, 22, 23, 39, 42, 695, DateTimeKind.Local).AddTicks(9229), false, 456, 0, 1, 0, "AnotherStreet", 0m, 1 }
                 });
 
             migrationBuilder.CreateIndex(
