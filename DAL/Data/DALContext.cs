@@ -8,7 +8,7 @@ using DAL.enums;
 namespace DAL.Data;
 
 public class DALContext(DbContextOptions<DALContext> options) :
-    IdentityDbContext<AppUser, IdentityRole<int>, int>(options)
+    IdentityDbContext<AppUser, IdentityRole<string>, string>(options)
 {
     public DbSet<Product> Products { get; set; } = default!;
 
@@ -38,7 +38,7 @@ public class DALContext(DbContextOptions<DALContext> options) :
               new Order
         {
             Id = 1,
-            UserId = 1,
+            UserId = "1",
             ProductId = 1,
            DateForConsultancy = DateTime.Now,
             CreatedAt = DateTime.UtcNow,
@@ -51,7 +51,7 @@ public class DALContext(DbContextOptions<DALContext> options) :
         new Order
         {
             Id = 2,
-            UserId = 1,
+            UserId = "1",
             ProductId = 1,
             DateForConsultancy = DateTime.Now,
             CreatedAt = DateTime.UtcNow,
@@ -79,11 +79,11 @@ public class DALContext(DbContextOptions<DALContext> options) :
 
 
         var hasher = new PasswordHasher<AppUser>();
-        modelBuilder.Entity<IdentityRole<int>>()
+        modelBuilder.Entity<IdentityRole<string>>()
             .HasData(new[] {
-                new IdentityRole<int>()
+                new IdentityRole<string>()
                 {
-                    Id = 1,
+                    Id = "1",
                     Name = "admin",
                     NormalizedName = "ADMIN",
                     ConcurrencyStamp = Guid.NewGuid().ToString()
@@ -94,7 +94,7 @@ public class DALContext(DbContextOptions<DALContext> options) :
           .HasData(new[] {
               new AppUser()
               {
-                  Id = 1,
+                  Id = "1",
                   Email = "itamarherr@gmail.com",
                   NormalizedEmail = "ITAMARHERR@GMAIL.COM",
                   UserName = "Itamar",
@@ -103,12 +103,16 @@ public class DALContext(DbContextOptions<DALContext> options) :
                   PasswordHash = hasher.HashPassword(null, "12345")
               }
           });
-        modelBuilder.Entity<IdentityUserRole<int>>().HasData([
-            new IdentityUserRole<int>()
+        modelBuilder.Entity<IdentityUserRole<string>>().HasData(new[]
+        {
+             new IdentityUserRole<string>()
             {
-                RoleId = 1,
-                UserId = 1
+                RoleId = "1",
+                UserId = "1"
             }
-        ]);
+
+        });
+           
+        
     }
 }

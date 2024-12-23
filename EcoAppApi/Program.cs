@@ -24,7 +24,7 @@ namespace EcoAppApi
             // Add services to the container.
             builder.Services.AddDbContext<DALContext>(options =>
               options.UseSqlServer(builder.Configuration.GetConnectionString("DALContext") ?? throw new InvalidOperationException("Connection string 'DALContext' not found.")));
-            builder.Services.AddIdentity<AppUser, IdentityRole<int>>(options =>
+            builder.Services.AddIdentity<AppUser, IdentityRole<string>>(options =>
             {
                 options.User.RequireUniqueEmail = true;
                 options.Password.RequiredLength = 8;
@@ -45,11 +45,15 @@ namespace EcoAppApi
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["SecretKey"])),
                     ValidateIssuer = true,
                     ValidateAudience = true,
-                    ValidIssuer = jwtSettings["Issuer"],
-                    ValidAudience = jwtSettings["Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["SecretKey"])),
+                    ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
+                    ValidAudience = builder.Configuration["JwtSettings:Audience"],
+                    ValidateLifetime = true,
+
+
                     ClockSkew = TimeSpan.Zero
                 };
                 options.MapInboundClaims = false;
@@ -67,9 +71,12 @@ namespace EcoAppApi
 
             builder.Services.AddScoped<ProductsRepository>();
             builder.Services.AddScoped<IOrderRepository, OrderRepository>();
-            builder.Services.AddScoped<IOrderService, OrderService>();
+            //builder.Services.AddScoped<IOrderService, OrderService>();
           /*  builder.Services.AddScoped<PricingService>()*/;
             builder.Services.AddScoped<JwtUtils>();
+            //builder.Services.AddHttpContextAccessor();
+            //builder.Services.AddScoped<IUserContextService, UserContextService>();
+
 
             builder.Services.AddLogging();
             builder.Services.AddControllers();

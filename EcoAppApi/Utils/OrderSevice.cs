@@ -6,7 +6,7 @@ using Microsoft.OpenApi.Extensions;
 
 namespace EcoAppApi.Utils;
 
-public class OrderService : IOrderService
+public class OrderService 
 {
     private readonly IOrderRepository _orderRepository;
     //private readonly PricingService _pricingService;
@@ -33,7 +33,7 @@ public class OrderService : IOrderService
 
         var order = new Order
         {
-            UserId = orderDto.UserId,
+            UserId = orderDto.UserId.ToString(),
             ProductId = orderDto.ProductId,
             AdditionalNotes = orderDto.AdditionalNotes,
             TotalPrice = orderDto.TotalPrice ?? product.Price, // Default to Product Price if TotalPrice is null
@@ -70,7 +70,7 @@ public class OrderService : IOrderService
         throw new NotImplementedException();
     }
 
-    public async Task<OrderDto> UpdateOrderAsync(int id, UpdateOrderDto orderDto)
+    public async Task<OrderDto> UpdateOrderAsync(string id, UpdateOrderDto orderDto)
     {
         var order = await _context.Orders.FindAsync(id);
         if (order == null)

@@ -12,19 +12,21 @@ namespace EcoAppApi.Controllers
     public class AuthController(
         UserManager<AppUser> UserManager,
         SignInManager<AppUser> signInManager,
-        RoleManager<IdentityRole<int>>roleManager,
+        RoleManager<IdentityRole<string>>roleManager,
         JwtUtils jwtService
         ) : ControllerBase
     {
         [HttpPost("Register")]
-        public async Task<ActionResult> Register(RegisterDto dto)
+        public async Task<ActionResult> Register([FromBody] RegisterDto dto)
         {
             if(ModelState.IsValid)
             {
-                var result = await UserManager.CreateAsync(dto.ToUser(), dto.Password);
+                var user = dto.ToUser();
+                Console.WriteLine($"Generated User Id: {user.Id}"); // Ensure Id is not null
+                var result = await UserManager.CreateAsync(user, dto.Password);
                 if (result.Succeeded)
                 {
-                    return Ok();
+                    return Ok(new { message = "Registration successful." });
                 }
                 return BadRequest(result.Errors);
             }

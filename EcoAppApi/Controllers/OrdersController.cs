@@ -24,13 +24,13 @@ namespace EcoAppApi.Controllers
     public class OrdersController : ControllerBase
     {
         private readonly DALContext _context;
-        private readonly IOrderService _orderService;
+        //private readonly IOrderService _orderService;
         private readonly ILogger<OrdersController> _logger;
 
-        public OrdersController(DALContext context, IOrderService orderService, ILogger<OrdersController> logger)
+        public OrdersController(DALContext context, /*IOrderService orderService,*/ ILogger<OrdersController> logger)
         {
             _context = context;
-            _orderService = orderService;
+            //_orderService = orderService;
             _logger = logger;
         }
 
@@ -41,7 +41,7 @@ namespace EcoAppApi.Controllers
              [FromQuery] int pageSize = 20,
              [FromQuery] string sortBy = "CreatedAt",
              [FromQuery] bool descending = true,
-             [FromQuery] int? userId = null,
+             [FromQuery] string? userId = null,
              [FromQuery] string userEmail = null
         )
         {
@@ -60,8 +60,8 @@ namespace EcoAppApi.Controllers
                 .Include(o => o.User)
                 .AsQueryable();
 
-                if (userId.HasValue)
-                    query = query.Where(o => o.User.Id == userId.Value);
+                if (!string.IsNullOrEmpty(userId))
+                    query = query.Where(o => o.User.Id == userId);
 
                 if (!string.IsNullOrEmpty(userEmail))
                     query = query.Where(o => o.User.Email.Contains(userEmail));
@@ -92,8 +92,8 @@ namespace EcoAppApi.Controllers
                 return StatusCode(500, new { message = "Internal server error", details = ex.Message });
             }
         }
-      
-        // GET: api/Orders/5
+
+        //GET: api/Orders/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Order>> GetOrder(int id)
         {
@@ -125,13 +125,10 @@ namespace EcoAppApi.Controllers
             {
                 return Unauthorized(new { error = "User is not authenticated." });
             }
-            if(!int.TryParse(userIdClaim, out int userId))
-            {
-                return BadRequest(new { error = "Invalid User ID in token." });
-            }
-
+     
+            
             var userOrders = await _context.Orders
-                .Where(o => o.UserId == userId)
+                .Where(o => o.UserId == userIdClaim)
               .OrderByDescending(o => o.CreatedAt)
                 .Select(o => new OrderDto
                 {
@@ -161,32 +158,42 @@ namespace EcoAppApi.Controllers
         }
         // PUT: api/Orders/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateOrder(int id, [FromBody] UpdateOrderDto orderDto)
-        {
-            try
-            {
-                var updatedOrder = await _orderService.UpdateOrderAsync(id, orderDto);
-                return Ok(updatedOrder);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-        }
+        //[HttpPut("{id}")]
+        //public async Task<IActionResult> UpdateOrder(int id, [FromBody] UpdateOrderDto orderDto)
+        //{
+        //    try
+        //    {
+        //        var updatedOrder = await _orderService.UpdateOrderAsync(id, orderDto);
+        //        return Ok(updatedOrder);
+        //    }
+        //    catch (KeyNotFoundException ex)
+        //    {
+        //        return NotFound(ex.Message);
+        //    }
+        //}
 
         // POST: api/Orders
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<OrderDto>> CreateOrder([FromBody] CreateOrderDto createDto)
         {
-            var user = await _context.Users.FindAsync(createDto.UserId);
-            var service = await _context.Products.FindAsync(createDto.ProductId);
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
-            if (user == null || service == null)
+            if (string.IsNullOrEmpty(userIdClaim))
             {
-                return BadRequest(new { errors = new[] { "Invalid User or Product ID." } });
+                return Unauthorized(new { error = "User is not authenticated." });
             }
+            if (!Guid.TryParse(userIdClaim, out _))
+            {
+                return BadRequest(new { error = "Invalid User ID format." });
+            }
+            //var user = await _context.Users.FindAsync(createDto.UserId);
+            //var service = await _context.Products.FindAsync(createDto.ProductId);
+
+            //if (user == null || service == null)
+            //{
+            //    return BadRequest(new { errors = new[] { "Invalid User or Product ID." } });
+            //}
             if (!ModelState.IsValid)
             {
                 var errors = ModelState.Values
@@ -203,11 +210,11 @@ namespace EcoAppApi.Controllers
 
             var order = new Order
             {
-                UserId = createDto.UserId,
+                UserId = userIdClaim,
                 ProductId = createDto.ProductId,
                 //ImageUrl = createDto.ImageUrl,
                 AdditionalNotes = createDto.AdditionalNotes,  
-                TotalPrice = createDto.TotalPrice ?? service.Price,
+                //TotalPrice = createDto.TotalPrice ?? service.Price,
                 NumberOfTrees = createDto.NumberOfTrees,
                 City = createDto.City,
                 Street = createDto.Street,
@@ -216,8 +223,8 @@ namespace EcoAppApi.Controllers
                 IsPrivateArea = createDto.IsPrivateArea,
                 DateForConsultancy = createDto.DateForConsultancy,
                 CreatedAt = DateTime.UtcNow,
-                Product = service,
-                User = user,
+                //Product = service,
+                //User = user,
                 StatusType = createDto.Status,
 
                 //LastUpdate = DateTime.UtcNow
@@ -227,7 +234,7 @@ namespace EcoAppApi.Controllers
 
             return CreatedAtAction(nameof(GetOrder), new { id = order.Id }, order.ToDto());
         }
-       
+
 
         // DELETE: api/Orders/5
         [HttpDelete("{id}")]

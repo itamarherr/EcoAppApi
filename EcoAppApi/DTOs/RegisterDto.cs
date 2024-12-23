@@ -21,8 +21,11 @@ public static class RegisterDtoExtentions
     {
         return new AppUser()
         {
+            Id = Guid.NewGuid().ToString(), // Assign a unique string ID
             Email = dto.Email,
-            UserName = dto.Username
+            UserName = dto.Username,
+            NormalizedEmail = dto.Email.ToUpper(),
+            NormalizedUserName = dto.Username.ToUpper()
         };
     }
 }

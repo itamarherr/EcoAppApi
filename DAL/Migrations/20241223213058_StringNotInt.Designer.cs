@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(DALContext))]
-    [Migration("20241222213943_ChangeStatusAndConsultancy")]
-    partial class ChangeStatusAndConsultancy
+    [Migration("20241223213058_StringNotInt")]
+    partial class StringNotInt
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,11 +27,8 @@ namespace DAL.Migrations
 
             modelBuilder.Entity("DAL.Models.AppUser", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
@@ -95,17 +92,17 @@ namespace DAL.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 1,
+                            Id = "1",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "ad9994d2-a76f-446a-800c-febe5a930d5f",
+                            ConcurrencyStamp = "699ef94d-af25-4641-b9cc-49e443c7fc9a",
                             Email = "itamarherr@gmail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "ITAMARHERR@GMAIL.COM",
                             NormalizedUserName = "ITAMAR",
-                            PasswordHash = "AQAAAAIAAYagAAAAEFQMVIT6YdINI7CY6pYik5e29agS14GnEwhaJk+PrhdKsqLGe03O6gBnPQqeAcGPhg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEDBXZNDynMPyQhTN8jpJvXA8W7LZ2OAniDtDlc1sWHAIlCxKwJI5tR5HkYevywibgA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "e8c4ee0a-d00b-43d6-8df3-572905f5b909",
+                            SecurityStamp = "8b90398f-e946-4715-b768-2b8e3c307839",
                             TwoFactorEnabled = false,
                             UserName = "Itamar"
                         });
@@ -158,8 +155,9 @@ namespace DAL.Migrations
                     b.Property<decimal>("TotalPrice")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
@@ -175,8 +173,8 @@ namespace DAL.Migrations
                             Id = 1,
                             City = "SampleCity",
                             ConsultancyType = 0,
-                            CreatedAt = new DateTime(2024, 12, 22, 21, 39, 42, 695, DateTimeKind.Utc).AddTicks(9225),
-                            DateForConsultancy = new DateTime(2024, 12, 22, 23, 39, 42, 695, DateTimeKind.Local).AddTicks(9223),
+                            CreatedAt = new DateTime(2024, 12, 23, 21, 30, 57, 795, DateTimeKind.Utc).AddTicks(622),
+                            DateForConsultancy = new DateTime(2024, 12, 23, 23, 30, 57, 795, DateTimeKind.Local).AddTicks(620),
                             IsPrivateArea = false,
                             Number = 123,
                             NumberOfTrees = 0,
@@ -184,15 +182,15 @@ namespace DAL.Migrations
                             StatusType = 0,
                             Street = "SampleStreet",
                             TotalPrice = 0m,
-                            UserId = 1
+                            UserId = "1"
                         },
                         new
                         {
                             Id = 2,
                             City = "AnotherCity",
                             ConsultancyType = 0,
-                            CreatedAt = new DateTime(2024, 12, 22, 21, 39, 42, 695, DateTimeKind.Utc).AddTicks(9230),
-                            DateForConsultancy = new DateTime(2024, 12, 22, 23, 39, 42, 695, DateTimeKind.Local).AddTicks(9229),
+                            CreatedAt = new DateTime(2024, 12, 23, 21, 30, 57, 795, DateTimeKind.Utc).AddTicks(628),
+                            DateForConsultancy = new DateTime(2024, 12, 23, 23, 30, 57, 795, DateTimeKind.Local).AddTicks(626),
                             IsPrivateArea = false,
                             Number = 456,
                             NumberOfTrees = 0,
@@ -200,7 +198,7 @@ namespace DAL.Migrations
                             StatusType = 0,
                             Street = "AnotherStreet",
                             TotalPrice = 0m,
-                            UserId = 1
+                            UserId = "1"
                         });
                 });
 
@@ -241,13 +239,10 @@ namespace DAL.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<int>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<string>", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -273,14 +268,14 @@ namespace DAL.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 1,
-                            ConcurrencyStamp = "0c500b3b-2ecf-4213-b7a9-33474520af21",
+                            Id = "1",
+                            ConcurrencyStamp = "c675f6dc-1edb-49aa-b80a-20bb3cc36a9d",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         });
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -294,8 +289,9 @@ namespace DAL.Migrations
                     b.Property<string>("ClaimValue")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
+                    b.Property<string>("RoleId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
@@ -304,7 +300,7 @@ namespace DAL.Migrations
                     b.ToTable("AspNetRoleClaims", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -318,8 +314,9 @@ namespace DAL.Migrations
                     b.Property<string>("ClaimValue")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
@@ -328,7 +325,7 @@ namespace DAL.Migrations
                     b.ToTable("AspNetUserClaims", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
                         .HasColumnType("nvarchar(450)");
@@ -339,8 +336,9 @@ namespace DAL.Migrations
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -349,13 +347,13 @@ namespace DAL.Migrations
                     b.ToTable("AspNetUserLogins", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
+                    b.Property<string>("RoleId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -366,15 +364,15 @@ namespace DAL.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = 1,
-                            RoleId = 1
+                            UserId = "1",
+                            RoleId = "1"
                         });
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("LoginProvider")
                         .HasColumnType("nvarchar(450)");
@@ -409,16 +407,16 @@ namespace DAL.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<int>", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<string>", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
                     b.HasOne("DAL.Models.AppUser", null)
                         .WithMany()
@@ -427,7 +425,7 @@ namespace DAL.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.HasOne("DAL.Models.AppUser", null)
                         .WithMany()
@@ -436,9 +434,9 @@ namespace DAL.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<int>", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<string>", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -451,7 +449,7 @@ namespace DAL.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
                     b.HasOne("DAL.Models.AppUser", null)
                         .WithMany()
