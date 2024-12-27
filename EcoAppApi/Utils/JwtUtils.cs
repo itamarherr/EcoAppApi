@@ -33,7 +33,7 @@ public class JwtUtils(IConfiguration configuration, UserManager<AppUser> userMan
             claims.Add(new Claim(ClaimTypes.Role, "admin"));
         }
         //That is Encrypted using a SECRET key:
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+        var key = new SymmetricSecurityKey(Convert.FromBase64String(secretKey));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
 
         JwtSecurityToken token = new JwtSecurityToken(

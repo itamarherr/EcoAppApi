@@ -16,6 +16,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.IdentityModel.Tokens;
+using static NuGet.Packaging.PackagingConstants;
+
 
 namespace EcoAppApi.Controllers
 {
@@ -26,12 +28,14 @@ namespace EcoAppApi.Controllers
         private readonly DALContext _context;
         //private readonly IOrderService _orderService;
         private readonly ILogger<OrdersController> _logger;
+        private readonly PricingService _pricingService;
 
-        public OrdersController(DALContext context, /*IOrderService orderService,*/ ILogger<OrdersController> logger)
+        public OrdersController(DALContext context, PricingService pricingService, ILogger<OrdersController> logger)
         {
             _context = context;
             //_orderService = orderService;
             _logger = logger;
+            _pricingService = pricingService;
         }
 
         // GET: api/Orders
@@ -118,25 +122,33 @@ namespace EcoAppApi.Controllers
         [HttpGet("my-orders")]
         public async Task<ActionResult<OrderDto>> GetCurrentUserOrders()
         {
- 
             var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
     
             if (string.IsNullOrEmpty(userIdClaim) )
             {
                 return Unauthorized(new { error = "User is not authenticated." });
             }
-     
-            
-            var userOrders = await _context.Orders
+
+
+            var orders = await _context.Orders
                 .Where(o => o.UserId == userIdClaim)
+                 .Include(o => o.User)       // Ensure User is loaded
+                 .Include(o => o.Product)
               .OrderByDescending(o => o.CreatedAt)
-                .Select(o => new OrderDto
+              .ToListAsync();
+
+            foreach (var order in orders)
+            {
+                Console.WriteLine(value: $"Order ID: {order.Id}, User: {order.User?.UserName ?? "NULL"}, Product: {order.Product?.Name ?? "NULL"}, NumberOfTrees: {order.NumberOfTrees}");
+            }
+            var userOrders = orders.Select(o => new OrderDto
                 {
                     Id = o.Id,
                     UserId = userIdClaim,
-                    UserName = o.User.UserName,
+                    UserName = o.User.UserName ?? "Unknown User",
                     CreatedAt = o.CreatedAt,
-                    ServiceType = o.Product.Name,  // Assuming this comes from Product
+                    ServiceType = o.Product.Name ?? "Unknown Product", 
+                    NumberOfTrees = o.NumberOfTrees,
           
                     City = o.City,
                     Street = o.Street,
@@ -148,10 +160,11 @@ namespace EcoAppApi.Controllers
                     AdditionalNotes = o.AdditionalNotes,
 
                     TotalPrice = o.TotalPrice,
-                    UserEmail = o.User.Email,
+                    UserEmail = o.User.Email ?? "No Email",
                     //AdminNotes = o.AdminNotes
+
                 })
-                .FirstOrDefaultAsync();
+                .FirstOrDefault();
 
             return Ok(userOrders);
  
@@ -177,6 +190,7 @@ namespace EcoAppApi.Controllers
         [HttpPost]
         public async Task<ActionResult<OrderDto>> CreateOrder([FromBody] CreateOrderDto createDto)
         {
+            Console.WriteLine("Hello!");
             var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
             if (string.IsNullOrEmpty(userIdClaim))
@@ -207,6 +221,11 @@ namespace EcoAppApi.Controllers
             //{
             //    return BadRequest("Invalid Consultancy Type.");
             //}
+            var totalPrice = _pricingService.CalculatePrice(
+                createDto.ConsultancyType,
+                createDto.NumberOfTrees,
+                createDto.IsPrivateArea
+                );
 
             var order = new Order
             {
@@ -214,18 +233,18 @@ namespace EcoAppApi.Controllers
                 ProductId = createDto.ProductId,
                 //ImageUrl = createDto.ImageUrl,
                 AdditionalNotes = createDto.AdditionalNotes,  
-                //TotalPrice = createDto.TotalPrice ?? service.Price,
+                TotalPrice = totalPrice,
                 NumberOfTrees = createDto.NumberOfTrees,
                 City = createDto.City,
                 Street = createDto.Street,
                 Number = createDto.Number,
-                ConsultancyType = (Purpose)createDto.ConsultancyType,
+                ConsultancyType = createDto.ConsultancyType,
                 IsPrivateArea = createDto.IsPrivateArea,
                 DateForConsultancy = createDto.DateForConsultancy,
                 CreatedAt = DateTime.UtcNow,
                 //Product = service,
                 //User = user,
-                StatusType = createDto.Status,
+                StatusType = createDto.StatusType,
 
                 //LastUpdate = DateTime.UtcNow
             };

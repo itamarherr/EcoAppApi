@@ -21,7 +21,7 @@ namespace EcoAppApi.DTOs
         public string Street { get; set; }
         public int Number { get; set; }
         public Purpose ConsultancyType { get; set; }
-
+        public int NumberOfTrees { get; set; }
         public bool IsPrivateArea { get; set; }
         public DateTime DateForConsultancy { get; set; }
         public string? AdditionalNotes { get; set; }
@@ -51,6 +51,7 @@ namespace EcoAppApi.DTOs
                 ConsultancyType = order.ConsultancyType,
                 IsPrivateArea = order.IsPrivateArea,
                 DateForConsultancy = order.DateForConsultancy,
+                NumberOfTrees = order.NumberOfTrees,
                 AdditionalNotes = order.AdditionalNotes,
                 CreatedAt = order.CreatedAt,
                 ServiceType = order.Product?.Name ?? "Unspecified",

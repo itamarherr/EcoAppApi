@@ -12,6 +12,7 @@ using EcoAppApi.Controllers;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
+using System.Security.Cryptography;
 
 namespace EcoAppApi
 {
@@ -36,7 +37,24 @@ namespace EcoAppApi
             options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
              });
             //JWT Setup:
-            var jwtSettings = builder.Configuration.GetSection("JWTSettings");
+            
+            var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+            //var secretKey = jwtSettings["SecretKey"];
+            //if (string.IsNullOrEmpty(secretKey))
+            //{
+            //    byte[] key = new byte[64]; // 512 bits = 64 bytes
+            //    using (var rng = RandomNumberGenerator.Create())
+            //    {
+            //        rng.GetBytes(key); // Fill the array with cryptographically secure random bytes
+            //    }
+
+            //    secretKey = Convert.ToBase64String(key);
+
+            //    builder.Configuration["JwtSettings:SecretKey"] = secretKey;
+            //    Console.WriteLine("Generated Key (Base64):");
+            //    Console.WriteLine(secretKey);
+            //}
+
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -45,16 +63,13 @@ namespace EcoAppApi
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["SecretKey"])),
+                    IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(jwtSettings["SecretKey"])),
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
                     ValidAudience = builder.Configuration["JwtSettings:Audience"],
                     ValidateLifetime = true,
-
-
-                    ClockSkew = TimeSpan.Zero
+   
                 };
                 options.MapInboundClaims = false;
                 options.Events = new JwtBearerEvents
@@ -72,9 +87,9 @@ namespace EcoAppApi
             builder.Services.AddScoped<ProductsRepository>();
             builder.Services.AddScoped<IOrderRepository, OrderRepository>();
             //builder.Services.AddScoped<IOrderService, OrderService>();
-          /*  builder.Services.AddScoped<PricingService>()*/;
+            builder.Services.AddScoped<PricingService>();
             builder.Services.AddScoped<JwtUtils>();
-            //builder.Services.AddHttpContextAccessor();
+            builder.Services.AddHttpContextAccessor();
             //builder.Services.AddScoped<IUserContextService, UserContextService>();
 
 
@@ -160,6 +175,8 @@ namespace EcoAppApi
                 app.UseSwaggerUI();
             }
             app.MapControllers();
+            var keyBytes = Convert.FromBase64String("QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUE=");
+            Console.WriteLine($"Key Length: {keyBytes.Length} bytes");
 
             app.Run();
         }

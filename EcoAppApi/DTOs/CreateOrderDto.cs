@@ -17,13 +17,13 @@ namespace EcoAppApi.DTOs
         public string City { get; set; }
         public string Street { get; set; }
         public int Number { get; set; }
-        public int ConsultancyType { get; set; }
+        public Purpose ConsultancyType { get; set; }
         public bool IsPrivateArea { get; set; }
         [Required]
         public DateTime DateForConsultancy { get; set; }
         public DateTime CreatedAt { get; set; }
         public string UserEmail { get; set; }
-        public OrderStatus Status { get; set; } // The status of the order
+        public OrderStatus StatusType { get; set; } // The status of the order
         public string ServiceType { get; set; } // Name of the service/product
     }
 

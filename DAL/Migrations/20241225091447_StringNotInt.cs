@@ -214,12 +214,12 @@ namespace DAL.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "1", "c675f6dc-1edb-49aa-b80a-20bb3cc36a9d", "admin", "ADMIN" });
+                values: new object[] { "1", "29389cde-4f11-4a12-910b-99e67cdd1044", "admin", "ADMIN" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "1", 0, "699ef94d-af25-4641-b9cc-49e443c7fc9a", "itamarherr@gmail.com", false, false, null, "ITAMARHERR@GMAIL.COM", "ITAMAR", "AQAAAAIAAYagAAAAEDBXZNDynMPyQhTN8jpJvXA8W7LZ2OAniDtDlc1sWHAIlCxKwJI5tR5HkYevywibgA==", null, false, "8b90398f-e946-4715-b768-2b8e3c307839", false, "Itamar" });
+                values: new object[] { "1", 0, "e628bfef-73f8-48eb-a547-d8e307672d38", "itamarherr@gmail.com", false, false, null, "ITAMARHERR@GMAIL.COM", "ITAMAR", "AQAAAAIAAYagAAAAEAtYYj7pPrzK6l5okcDQ2dTPQxQy1lXh4U5IOMfAms92eNjjyrfkJxLQIwuOwB96AQ==", null, false, "8822372c-1897-4c24-8855-8b9122ebfa96", false, "Itamar" });
 
             migrationBuilder.InsertData(
                 table: "Products",
@@ -236,8 +236,8 @@ namespace DAL.Migrations
                 columns: new[] { "Id", "AdditionalNotes", "City", "ConsultancyType", "CreatedAt", "DateForConsultancy", "IsPrivateArea", "Number", "NumberOfTrees", "ProductId", "StatusType", "Street", "TotalPrice", "UserId" },
                 values: new object[,]
                 {
-                    { 1, null, "SampleCity", 0, new DateTime(2024, 12, 23, 21, 30, 57, 795, DateTimeKind.Utc).AddTicks(622), new DateTime(2024, 12, 23, 23, 30, 57, 795, DateTimeKind.Local).AddTicks(620), false, 123, 0, 1, 0, "SampleStreet", 0m, "1" },
-                    { 2, null, "AnotherCity", 0, new DateTime(2024, 12, 23, 21, 30, 57, 795, DateTimeKind.Utc).AddTicks(628), new DateTime(2024, 12, 23, 23, 30, 57, 795, DateTimeKind.Local).AddTicks(626), false, 456, 0, 1, 0, "AnotherStreet", 0m, "1" }
+                    { 1, null, "SampleCity", 0, new DateTime(2024, 12, 25, 9, 14, 46, 502, DateTimeKind.Utc).AddTicks(4530), new DateTime(2024, 12, 25, 11, 14, 46, 502, DateTimeKind.Local).AddTicks(4527), false, 123, 0, 1, 0, "SampleStreet", 0m, "1" },
+                    { 2, null, "AnotherCity", 0, new DateTime(2024, 12, 25, 9, 14, 46, 502, DateTimeKind.Utc).AddTicks(4535), new DateTime(2024, 12, 25, 11, 14, 46, 502, DateTimeKind.Local).AddTicks(4534), false, 456, 0, 1, 0, "AnotherStreet", 0m, "1" }
                 });
 
             migrationBuilder.CreateIndex(
