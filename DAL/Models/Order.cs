@@ -38,5 +38,5 @@ public class Order
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     //public DateTime LastUpdate { get; set; } = DateTime.Now;
 
-    
+    public string? AdminNotes { get; set; }
 }

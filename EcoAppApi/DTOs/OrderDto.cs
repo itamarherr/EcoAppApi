@@ -13,6 +13,7 @@ namespace EcoAppApi.DTOs
     {
         public int Id { get; set; }
         public string UserId { get; set; }
+        public int ProductId { get; set; }
         public string UserName { get; set; }
         public DateTime CreatedAt { get; set; }
         public string ServiceType { get; set; }
@@ -44,6 +45,9 @@ namespace EcoAppApi.DTOs
             return new OrderDto
             {
                 Id = order.Id,
+
+                UserId = order.UserId,
+                ProductId = order.ProductId,
                 UserName = order.User?.UserName ?? "Unknown", // Assuming AppUser has a UserName property
                 City = order.City,
                 Street = order.Street,

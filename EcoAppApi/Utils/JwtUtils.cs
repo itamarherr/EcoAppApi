@@ -8,20 +8,28 @@ namespace EcoAppApi.Utils;
 
 public class JwtUtils(IConfiguration configuration, UserManager<AppUser> userManager)
 {
+   
+
     public async Task<string> CreateToken(AppUser user)
     {
-
+        Console.WriteLine("Hello");
         var jwtSettings = configuration.GetSection("JwtSettings");
         var secretKey = jwtSettings["SecretKey"] ?? throw new Exception("Secret key must be set in app settings");
+
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+
+      
 
         //JWT is a collection of claims
         var claims = new List<Claim>()
         {
         
             new Claim(ClaimTypes.NameIdentifier, user.Id),
+             //new Claim("userId", user.Id),
                 //new Claim(ClaimTypes.Name, user.UserName),
             //new Claim(JwtRegisteredClaimNames.Email, user.Email),
         };
+        Console.WriteLine($"Creating token for user ID: {user.Id}");
         foreach (var claim in claims)
         {
             Console.WriteLine($"{claim.Type}: {claim.Value}");
@@ -33,10 +41,10 @@ public class JwtUtils(IConfiguration configuration, UserManager<AppUser> userMan
             claims.Add(new Claim(ClaimTypes.Role, "admin"));
         }
         //That is Encrypted using a SECRET key:
-        var key = new SymmetricSecurityKey(Convert.FromBase64String(secretKey));
+
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
 
-        JwtSecurityToken token = new JwtSecurityToken(
+        var token = new JwtSecurityToken(
             issuer: jwtSettings["Issuer"],
             audience: jwtSettings["Audience"],
             expires: DateTime.UtcNow.AddDays(1),
@@ -45,7 +53,8 @@ public class JwtUtils(IConfiguration configuration, UserManager<AppUser> userMan
         );
 
         //convert the token to a string:
-        var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+        var jwt = new JwtSecurityTokenHandler().WriteToken(token); 
+       
 
         return jwt;
     }

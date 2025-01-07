@@ -6,7 +6,7 @@ namespace EcoAppApi.DTOs
     public class CreateOrderDto
     {
         [Required]
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         [Required]
         public int ProductId { get; set; }
         //public string ImageUrl { get; set; }

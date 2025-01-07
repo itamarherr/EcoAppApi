@@ -70,21 +70,21 @@ public class OrderService
         throw new NotImplementedException();
     }
 
-    public async Task<OrderDto> UpdateOrderAsync(string id, UpdateOrderDto orderDto)
-    {
-        var order = await _context.Orders.FindAsync(id);
-        if (order == null)
-        {
-            throw new KeyNotFoundException("Order not found");
-        }
+    //public async Task<OrderDto> UpdateOrderAsync(string id, UpdateOrderDto orderDto)
+    //{
+    //    var order = await _context.Orders.FindAsync(id);
+    //    if (order == null)
+    //    {
+    //        throw new KeyNotFoundException("Order not found");
+    //    }
 
-        order.StatusType = order.StatusType;
-        order.TotalPrice = orderDto.TotalPrice ?? order.TotalPrice;
-        order.AdditionalNotes = orderDto.AdditionalNotes ?? order.AdditionalNotes;
-        order.DateForConsultancy = orderDto.DateForConsultancy ?? order.DateForConsultancy;
-        // Update other fields similarly
-        await _context.SaveChangesAsync();
+    //    order.StatusType = order.StatusType;
+    //    order.TotalPrice = orderDto.TotalPrice ?? order.TotalPrice;
+    //    order.AdditionalNotes = orderDto.AdditionalNotes ?? order.AdditionalNotes;
+    //    order.DateForConsultancy = orderDto.DateForConsultancy ?? order.DateForConsultancy;
+    //    // Update other fields similarly
+    //    await _context.SaveChangesAsync();
 
-        return order.ToDto();
-    }
+    //    return order.ToDto();
+    //}
 }

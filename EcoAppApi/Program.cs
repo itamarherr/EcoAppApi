@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
 using System.Security.Cryptography;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace EcoAppApi
 {
@@ -21,7 +22,7 @@ namespace EcoAppApi
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
+            builder.Services.AddControllers();
             // Add services to the container.
             builder.Services.AddDbContext<DALContext>(options =>
               options.UseSqlServer(builder.Configuration.GetConnectionString("DALContext") ?? throw new InvalidOperationException("Connection string 'DALContext' not found.")));
@@ -37,23 +38,9 @@ namespace EcoAppApi
             options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
              });
             //JWT Setup:
-            
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-            //var secretKey = jwtSettings["SecretKey"];
-            //if (string.IsNullOrEmpty(secretKey))
-            //{
-            //    byte[] key = new byte[64]; // 512 bits = 64 bytes
-            //    using (var rng = RandomNumberGenerator.Create())
-            //    {
-            //        rng.GetBytes(key); // Fill the array with cryptographically secure random bytes
-            //    }
-
-            //    secretKey = Convert.ToBase64String(key);
-
-            //    builder.Configuration["JwtSettings:SecretKey"] = secretKey;
-            //    Console.WriteLine("Generated Key (Base64):");
-            //    Console.WriteLine(secretKey);
-            //}
+          
 
             builder.Services.AddAuthentication(options =>
             {
@@ -63,15 +50,18 @@ namespace EcoAppApi
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(jwtSettings["SecretKey"])),
+                   
+  
                     ValidateIssuer = true,
                     ValidateAudience = true,
+                    ValidateIssuerSigningKey = true,
                     ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
                     ValidAudience = builder.Configuration["JwtSettings:Audience"],
-                    ValidateLifetime = true,
-   
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes("Hj7xEhjlgMNrak17t5Q2HIvp+YN9wVtar+UpxyNMssua9rD/a7rIpabVnmQKvm1Ea6WJBR8GRTuDin3F7tlPxg=="))
+
                 };
-                options.MapInboundClaims = false;
+             
                 options.Events = new JwtBearerEvents
                 {
                     OnAuthenticationFailed = context =>
@@ -94,7 +84,6 @@ namespace EcoAppApi
 
 
             builder.Services.AddLogging();
-            builder.Services.AddControllers();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -109,19 +98,19 @@ namespace EcoAppApi
                 });
 
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            new string[] {}
-        }
-    });
+                  {
+                   {
+                          new OpenApiSecurityScheme
+                          {
+                           Reference = new OpenApiReference
+                            {
+                             Type = ReferenceType.SecurityScheme,
+                              Id = "Bearer"
+                             }
+                            },
+                             new string[] {}
+                   }
+                  });
             });
             builder.Logging.AddConsole();
 
@@ -163,7 +152,31 @@ namespace EcoAppApi
                 await next();
                 logger.LogInformation("Response: {StatusCode}", context.Response.StatusCode);
             });
+            app.Use(async (context, next) =>
+            {
+                Console.WriteLine("Request Headers:");
+                foreach (var header in context.Request.Headers)
+                {
+                    Console.WriteLine($"{header.Key}: {header.Value}");
+                }
+
+                if (context.Request.Headers.ContainsKey("Authorization"))
+                {
+                    Console.WriteLine("Authorization header found");
+                }
+
+                await next();
+            });
             app.UseCors(corsPolicy);
+            app.Use(async (context, next) =>
+            {
+                var userClaims = context.User.Claims;
+                foreach (var claim in userClaims)
+                {
+                    Console.WriteLine($"{claim.Type}: {claim.Value}");
+                }
+                await next();
+            });
 
             app.UseAuthentication();
 
@@ -175,8 +188,7 @@ namespace EcoAppApi
                 app.UseSwaggerUI();
             }
             app.MapControllers();
-            var keyBytes = Convert.FromBase64String("QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUE=");
-            Console.WriteLine($"Key Length: {keyBytes.Length} bytes");
+       
 
             app.Run();
         }
