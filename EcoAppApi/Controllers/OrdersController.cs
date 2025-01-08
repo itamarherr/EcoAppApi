@@ -131,7 +131,6 @@ namespace EcoAppApi.Controllers
                 return Unauthorized(new { error = "User is not authenticated." });
             }
 
-
             var orders = await _context.Orders
                 .Where(o => o.UserId == userIdClaim)
                  .Include(o => o.User)       // Ensure User is loaded
@@ -162,12 +161,10 @@ namespace EcoAppApi.Controllers
                     TotalPrice = o.TotalPrice,
                     UserEmail = o.User.Email ?? "No Email",
                     //AdminNotes = o.AdminNotes
-
                 })
                 .FirstOrDefault();
 
             return Ok(userOrders);
- 
         }
 
         [Authorize]
@@ -180,7 +177,6 @@ namespace EcoAppApi.Controllers
             {
                 return Unauthorized(new { error = "User is not authenticated." });
             }
-
 
             var lastOrder = await _context.Orders
                 .Where(o => o.UserId == userIdClaim)
@@ -213,11 +209,8 @@ namespace EcoAppApi.Controllers
                 UserEmail = lastOrder.User.Email ?? "No Email",
                 AdminNotes = lastOrder.AdditionalNotes
 
-            };
-                
-
+            };             
             return Ok(userOrder);
-
         }
 
         [HttpPut("my-orders/for-update")]
@@ -274,14 +267,10 @@ namespace EcoAppApi.Controllers
             return NoContent(); // 204 No Content indicates success with no body
         }
 
-    
 
         // PUT: api/Orders/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        //[ProducesResponseType(StatusCodes.Status204NoContent)] // No content on success
-        //[ProducesResponseType(StatusCodes.Status400BadRequest)] // Invalid input or ModelState
-        //[ProducesResponseType(StatusCodes.Status404NotFound)] // Order not found
 
         public async Task<IActionResult> UpdateOrder(int id, [FromBody] UpdateOrderDto updateOrderDto)
         {
@@ -320,20 +309,10 @@ namespace EcoAppApi.Controllers
                     return NotFound();
                     throw;
                 }
-       
-                
+               
             }
             return NoContent();
 
-            //    try
-            //    {
-            //        var updatedOrder = await _orderService.UpdateOrderAsync(id, orderDto);
-            //        return Ok(updatedOrder);
-            //    }
-            //    catch (KeyNotFoundException ex)
-            //    {
-            //        return NotFound(ex.Message);
-            //    }
         }
 
         // POST: api/Orders
@@ -341,18 +320,12 @@ namespace EcoAppApi.Controllers
         [HttpPost]
         public async Task<ActionResult<OrderDto>> CreateOrder([FromBody] CreateOrderDto createDto)
         {
-            //foreach (var claim in User.Claims)
-            //{
-            //    Console.WriteLine($"Claim Type: {claim.Type}, Value: {claim.Value}");
-            //}
+           
             var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            //var backupUserIdClaim = User.Claims.FirstOrDefault(c => c.Type == "userId")?.Value;
-
-      
 
             if (string.IsNullOrEmpty(userIdClaim))
             {
-                // Try alternative claim types
+         
                 userIdClaim = User.Claims.FirstOrDefault(c =>
                     c.Type == "sub" ||
                     c.Type == "userId" ||
@@ -368,13 +341,7 @@ namespace EcoAppApi.Controllers
             {
                 return BadRequest(new { error = "Invalid User ID format." });
             }
-            //var user = await _context.Users.FindAsync(createDto.UserId);
-            //var service = await _context.Products.FindAsync(createDto.ProductId);
-
-            //if (user == null || service == null)
-            //{
-            //    return BadRequest(new { errors = new[] { "Invalid User or Product ID." } });
-            //}
+     
             if (!ModelState.IsValid)
             {
                 var errors = ModelState.Values
@@ -384,10 +351,7 @@ namespace EcoAppApi.Controllers
 
                 return BadRequest(new  { errors });
             }
-            //if (!Enum.IsDefined(typeof(Purpose), createDto.ConsultancyType))
-            //{
-            //    return BadRequest("Invalid Consultancy Type.");
-            //}
+         
             var totalPrice = _pricingService.CalculatePrice(
                 createDto.ConsultancyType,
                 createDto.NumberOfTrees,
@@ -423,13 +387,22 @@ namespace EcoAppApi.Controllers
 
 
         // DELETE: api/Orders/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteOrder(int id)
+        [HttpDelete("my-orders/latest")]
+        public async Task<IActionResult> DeleteMyOrder()
         {
-            var order = await _context.Orders.FindAsync(id);
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim))
+            {
+                return Unauthorized("You are not authorized.");
+            }
+            var order = await _context.Orders
+                .Where(o => o.UserId == userIdClaim)
+                .OrderByDescending(o => o.CreatedAt)
+                .FirstOrDefaultAsync();
+                
             if (order == null)
             {
-                return NotFound();
+                return NotFound("Order not found or you don't have access to delete this order.");
             }
 
             _context.Orders.Remove(order);
@@ -438,9 +411,9 @@ namespace EcoAppApi.Controllers
             return NoContent();
         }
 
-        private bool OrderExists(int id)
-        {
-            return _context.Orders.Any(e => e.Id == id);
-        }
+        //private bool OrderExists(int id)
+        //{
+        //    return _context.Orders.Any(e => e.Id == id);
+        //}
     }
 }
