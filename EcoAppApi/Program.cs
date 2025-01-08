@@ -76,10 +76,12 @@ namespace EcoAppApi
 
             builder.Services.AddScoped<ProductsRepository>();
             builder.Services.AddScoped<IOrderRepository, OrderRepository>();
-            //builder.Services.AddScoped<IOrderService, OrderService>();
+            builder.Services.AddScoped<IOrderService, OrderService>();
             builder.Services.AddScoped<PricingService>();
             builder.Services.AddScoped<JwtUtils>();
             builder.Services.AddHttpContextAccessor();
+            builder.Services.AddDbContext<DALContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DALContext")));
             //builder.Services.AddScoped<IUserContextService, UserContextService>();
 
 

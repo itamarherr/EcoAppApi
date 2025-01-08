@@ -26,18 +26,20 @@ namespace EcoAppApi.Controllers
     public class OrdersController : ControllerBase
     {
         private readonly DALContext _context;
-        //private readonly IOrderService _orderService;
+        private readonly IOrderService _orderService;
         private readonly ILogger<OrdersController> _logger;
         private readonly PricingService _pricingService;
         private readonly JwtUtils _jwtService;
+        private readonly IOrderRepository _orderRepository;
 
-        public OrdersController(DALContext context, PricingService pricingService, ILogger<OrdersController> logger, JwtUtils jwtService)
+        public OrdersController(DALContext context, IOrderService orderService, PricingService pricingService, ILogger<OrdersController> logger, JwtUtils jwtService, IOrderRepository orderRepository)
         {
             _context = context;
-            //_orderService = orderService;
+            _orderService = orderService;
             _logger = logger;
             _pricingService = pricingService;
             _jwtService = jwtService;
+            _orderRepository = orderRepository; 
         }
 
         // GET: api/Orders
@@ -48,55 +50,62 @@ namespace EcoAppApi.Controllers
              [FromQuery] string sortBy = "CreatedAt",
              [FromQuery] bool descending = true,
              [FromQuery] string? userId = null,
-             [FromQuery] string userEmail = null
+             [FromQuery] string? userEmail = null
         )
         {
             try
             {
                 if (page <= 0 || pageSize <= 0)
                     return BadRequest(new { message = "Page and pageSize must be greater than zero." });
-               
-                var validSortFields = new[] { "CreatedAt", "TotalPrice", "Id" };
-                if (!validSortFields.Contains(sortBy, StringComparer.OrdinalIgnoreCase))
-                    return BadRequest(new { message = $"Invalid sort field: {sortBy}" });
+                var (orders, totalItems) = await _orderService.GetOrdersAsync(userId, userEmail, sortBy, descending, page, pageSize);
 
-
-                var query = _context.Orders
-                .AsNoTracking()
-                .Include(o => o.User)
-                .AsQueryable();
-
-                if (!string.IsNullOrEmpty(userId))
-                    query = query.Where(o => o.User.Id == userId);
-
-                if (!string.IsNullOrEmpty(userEmail))
-                    query = query.Where(o => o.User.Email.Contains(userEmail));
-
-                var totalItems = await query.CountAsync();
-
-                query = descending
-               ? query.OrderByDescending(o => EF.Property<object>(o, sortBy))
-               : query.OrderBy(o => EF.Property<object>(o, sortBy));
-               
-                var orders = await query
-                      .Skip((page - 1) * pageSize)
-                      .Take(pageSize)
-                      .Select(o => new OrderDto
+                return Ok(new { orders, totalItems });
+            } catch (Exception ex)
             {
-                    Id = o.Id,
-                    UserEmail = o.User != null ? o.User.Email : null,
-                    TotalPrice = o.TotalPrice,
-                    CreatedAt = o.CreatedAt
-                }).ToListAsync();
-
-                return Ok( orders );
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to fetch orders with params: page={Page}, pageSize={PageSize}, sortBy={SortBy}, descending={Descending}",
-                    page, pageSize, sortBy, descending, userId, userEmail);
+                _logger.LogError(ex, "Error fetching orders");
                 return StatusCode(500, new { message = "Internal server error", details = ex.Message });
             }
+            //    var validSortFields = new[] { "CreatedAt", "TotalPrice", "Id" };
+            //    if (!validSortFields.Contains(sortBy, StringComparer.OrdinalIgnoreCase))
+            //        return BadRequest(new { message = $"Invalid sort field: {sortBy}" });
+
+
+            //    var query = _context.Orders
+            //    .AsNoTracking()
+            //    .Include(o => o.User)
+            //    .AsQueryable();
+
+            //    if (!string.IsNullOrEmpty(userId))
+            //        query = query.Where(o => o.User.Id == userId);
+
+            //    if (!string.IsNullOrEmpty(userEmail))
+            //        query = query.Where(o => o.User.Email.Contains(userEmail));
+
+            //    var totalItems = await query.CountAsync();
+
+            //    query = descending
+            //   ? query.OrderByDescending(o => EF.Property<object>(o, sortBy))
+            //   : query.OrderBy(o => EF.Property<object>(o, sortBy));
+               
+            //    var orders = await query
+            //          .Skip((page - 1) * pageSize)
+            //          .Take(pageSize)
+            //          .Select(o => new OrderDto
+            //{
+            //        Id = o.Id,
+            //        UserEmail = o.User != null ? o.User.Email : null,
+            //        TotalPrice = o.TotalPrice,
+            //        CreatedAt = o.CreatedAt
+            //    }).ToListAsync();
+
+            //    return Ok( orders );
+            //}
+            //catch (Exception ex)
+            //{
+            //    _logger.LogError(ex, "Failed to fetch orders with params: page={Page}, pageSize={PageSize}, sortBy={SortBy}, descending={Descending}",
+            //        page, pageSize, sortBy, descending, userId, userEmail);
+            //    return StatusCode(500, new { message = "Internal server error", details = ex.Message });
+            //}
         }
 
         //GET: api/Orders/5

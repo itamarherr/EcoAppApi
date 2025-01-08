@@ -1,13 +1,17 @@
-﻿//using DAL.Models;
-//using EcoAppApi.DTOs;
+﻿using DAL.Models;
+using EcoAppApi.DTOs;
 
-//namespace EcoAppApi.Utils
-//{
-//    public interface IOrderService
-//    {
-//        Task<Order> CreateOrderAsync(CreateOrderDto orderDto, int userId);
-//        Task<List<Order>> GetAllOrdersForadminasync();
+namespace EcoAppApi.Utils
+{
+    public interface IOrderService
+    {
 
-//        Task<OrderDto> UpdateOrderAsync(int id, UpdateOrderDto orderDto);
-//    }
-//}
+        Task<(List<OrderDto>, int)> GetOrdersAsync(
+            string? userId, string? userEmail, string sortBy, bool descending, int page, int pageSize
+            );
+        //Task<Order> CreateOrderAsync(CreateOrderDto orderDto, int userId);
+        //Task<List<Order>> GetAllOrdersForadminasync();
+
+        //Task<OrderDto> UpdateOrderAsync(int id, UpdateOrderDto orderDto);
+    }
+}
