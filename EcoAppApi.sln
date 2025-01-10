@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EcoAppApi", "EcoAppApi\EcoA
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAL", "DAL\DAL.csproj", "{C420C115-B057-413A-B83F-C939AAD80810}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EcoAppApi.xUnitTests", "EcoAppApi.xUnitTests\EcoAppApi.xUnitTests.csproj", "{0FDEE10B-2B6B-403B-8904-ACC4277B4EAD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{C420C115-B057-413A-B83F-C939AAD80810}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C420C115-B057-413A-B83F-C939AAD80810}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C420C115-B057-413A-B83F-C939AAD80810}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0FDEE10B-2B6B-403B-8904-ACC4277B4EAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0FDEE10B-2B6B-403B-8904-ACC4277B4EAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0FDEE10B-2B6B-403B-8904-ACC4277B4EAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0FDEE10B-2B6B-403B-8904-ACC4277B4EAD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
