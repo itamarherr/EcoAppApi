@@ -65,7 +65,6 @@ namespace EcoAppApi.Controllers
                 _logger.LogError(ex, "Error fetching orders");
                 return StatusCode(500, new { message = "Internal server error", details = ex.Message });
             }
-   
         }
 
         //GET: api/Orders/5
@@ -114,41 +113,6 @@ namespace EcoAppApi.Controllers
                 _logger.LogError(ex, "Error fetching userws order");
                 return StatusCode(500, new { message = "Intenal server error" , details = ex.Message });    
             }
-
-            //var orders = await _context.Orders
-            //    .Where(o => o.UserId == userIdClaim)
-            //     .Include(o => o.User)       // Ensure User is loaded
-            //     .Include(o => o.Product)
-            //  .OrderByDescending(o => o.CreatedAt)
-            //  .ToListAsync();
-
-            //foreach (var order in orders)
-            //{
-            //    Console.WriteLine(value: $"Order ID: {order.Id}, User: {order.User?.UserName ?? "NULL"}, Product: {order.Product?.Name ?? "NULL"}, NumberOfTrees: {order.NumberOfTrees}");
-            //}
-            //var userOrders = orders.Select(o => new OrderDto
-            //    {
-            //        Id = o.Id,
-            //        UserId = userIdClaim,
-            //        UserName = o.User.UserName ?? "Unknown User",
-            //        CreatedAt = o.CreatedAt,
-            //        ServiceType = o.Product.Name ?? "Unknown Product", 
-            //        NumberOfTrees = o.NumberOfTrees,
-            //        City = o.City,
-            //        Street = o.Street,
-            //        Number = o.Number,
-            //        ConsultancyType = o.ConsultancyType,
-            //        StatusType = o.StatusType,
-            //        IsPrivateArea = o.IsPrivateArea,
-            //        DateForConsultancy = o.DateForConsultancy,
-            //        AdditionalNotes = o.AdditionalNotes,
-            //        TotalPrice = o.TotalPrice,
-            //        UserEmail = o.User.Email ?? "No Email",
-            //        //AdminNotes = o.AdminNotes
-            //    })
-            //    .FirstOrDefault();
-
-            //return Ok(userOrders);
         }
 
         [Authorize]
@@ -192,7 +156,6 @@ namespace EcoAppApi.Controllers
                 TotalPrice = lastOrder.TotalPrice,
                 UserEmail = lastOrder.User.Email ?? "No Email",
                 AdminNotes = lastOrder.AdditionalNotes
-
             };             
             return Ok(userOrder);
         }
@@ -251,7 +214,6 @@ namespace EcoAppApi.Controllers
             return NoContent(); // 204 No Content indicates success with no body
         }
 
-
         // PUT: api/Orders/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -292,11 +254,9 @@ namespace EcoAppApi.Controllers
                 {
                     return NotFound();
                     throw;
-                }
-               
+                }        
             }
             return NoContent();
-
         }
 
         // POST: api/Orders
@@ -335,40 +295,17 @@ namespace EcoAppApi.Controllers
 
                 return BadRequest(new  { errors });
             }
-         
-            var totalPrice = _pricingService.CalculatePrice(
-                createDto.ConsultancyType,
-                createDto.NumberOfTrees,
-                createDto.IsPrivateArea
-                );
 
-            var order = new Order
+            try
             {
-                UserId = userIdClaim,
-                ProductId = createDto.ProductId,
-                //ImageUrl = createDto.ImageUrl,
-                AdditionalNotes = createDto.AdditionalNotes,  
-                TotalPrice = totalPrice,
-                NumberOfTrees = createDto.NumberOfTrees,
-                City = createDto.City,
-                Street = createDto.Street,
-                Number = createDto.Number,
-                ConsultancyType = createDto.ConsultancyType,
-                IsPrivateArea = createDto.IsPrivateArea,
-                DateForConsultancy = createDto.DateForConsultancy,
-                CreatedAt = DateTime.UtcNow,
-                //Product = service,
-                //User = user,
-                StatusType = createDto.StatusType,
-
-                //LastUpdate = DateTime.UtcNow
-            };
-            _context.Orders.Add(order);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetOrder), new { id = order.Id }, order.ToDto());
+                var orderDto = await _orderService.CreateOrderAsync(createDto, userIdClaim);
+                return CreatedAtAction(nameof(GetOrder), new { id = orderDto.Id }, orderDto);
+            } catch (Exception ex)
+            {
+                _logger.LogError(ex, "Eror creatingorder");
+                return StatusCode(500, new { message = "Internal server error", details=ex.Message});
+            } 
         }
-
 
         // DELETE: api/Orders/5
         [HttpDelete("my-orders/latest")]
