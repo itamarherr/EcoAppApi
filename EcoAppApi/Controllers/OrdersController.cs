@@ -241,7 +241,7 @@ namespace EcoAppApi.Controllers
             }
 
             return NoContent();
-            return NoContent();
+       
         }
 
    

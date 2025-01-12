@@ -87,9 +87,14 @@ namespace DAL.Data
             await _context.SaveChangesAsync();
         }
 
-        public Task<Order?> GetLatestOrderAsync(string userId)
+        public async Task<Order?> GetLatestOrderAsync(string userId)
         {
-            throw new NotImplementedException();
+            return await _context.Orders
+                .Where(o => o.UserId == userId)
+                .Include(o => o.User)
+                .Include(o => o.Product)
+                .OrderByDescending(o => o.CreatedAt)
+                .FirstOrDefaultAsync();
         }
 
         public Task<Order> GetOrderByIdAsync(int id)

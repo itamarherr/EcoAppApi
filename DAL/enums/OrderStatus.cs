@@ -16,5 +16,6 @@ public enum OrderStatus
     [Display(Name = "inProgress")]
     inProgress = 4,
     [Display(Name = "completed")]
-    completed = 5
+    completed = 5,
+  
 }
