@@ -110,93 +110,67 @@ public class OrderService : IOrderService
         return saveOrder.ToDto();
     }
 
-   
+    public async Task<OrderDto?> GetLastOrderForUpdateAsync(string userId)
+    {
+        var lastOrder = await _orderRepository.GetLatestOrderAsync(userId);
+        return lastOrder?.ToDto(); 
+    }
+
+    public async Task<bool> UpdateOrderAsync(int id, UpdateOrderDto updateOrderDto)
+    {
+        var order = await _orderRepository.GetOrderByIdAsync(id);
+        if (order == null)
+        {
+            return false;
+        }
+
+        ApplyUpdates(order, updateOrderDto);
+
+        await _orderRepository.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> UpdateCurrentUserOrderAsync(string userId, UpdateOrderDto updateOrderDto)
+    {
+        var order = await _orderRepository.GetOrderByIdAsync(updateOrderDto.Id);
+        if (order == null || order.UserId != userId)
+        {
+            return false;
+        }
+
+        ApplyUpdates(order, updateOrderDto);
+
+        await _orderRepository.SaveChangesAsync();
+        return true;
+    }
+    private void ApplyUpdates(Order order, UpdateOrderDto updateOrderDto)
+    {
+        order.AdminNotes = updateOrderDto.AdminNotes;
+        order.TotalPrice = updateOrderDto.TotalPrice ?? order.TotalPrice;
+        order.AdditionalNotes = updateOrderDto.AdditionalNotes ?? order.AdditionalNotes;
+        order.NumberOfTrees = updateOrderDto.NumberOfTrees > 0 ? updateOrderDto.NumberOfTrees : order.NumberOfTrees;
+        order.City = !string.IsNullOrEmpty(updateOrderDto.City) ? updateOrderDto.City : order.City;
+        order.Street = !string.IsNullOrEmpty(updateOrderDto.Street) ? updateOrderDto.Street : order.Street;
+        order.Number = updateOrderDto.Number > 0 ? updateOrderDto.Number : order.Number;
+        order.ConsultancyType = updateOrderDto.ConsultancyType;
+        order.IsPrivateArea = updateOrderDto.IsPrivateArea;
+        order.DateForConsultancy = updateOrderDto.DateForConsultancy;
+        order.StatusType = updateOrderDto.StatusType;
+    }
+
+    public async Task<bool> DeleteLastOrderAsync(string userId)
+    {
+        var order = await _orderRepository.GetLatestOrderAsync(userId);
+
+        if (order == null)
+        {
+            return false; // No order to delete
+        }
+
+        await _orderRepository.DeleteOrderAsync(order);
+        return true;
+    }
 }
 
 
 
-
-
-
-
-//    var order = new Order
-//    {
-//        UserId = orderDto.UserId.ToString(),
-//        ProductId = orderDto.ProductId,
-//        AdditionalNotes = orderDto.AdditionalNotes,
-//        TotalPrice = orderDto.TotalPrice ?? product.Price, // Default to Product Price if TotalPrice is null
-//        DateForConsultancy = orderDto.DateForConsultancy ?? DateTime.Now,
-//        CreatedAt = DateTime.UtcNow,
-//        //StatusType = orderDto.StatusType 
-//        //ImageUrl = orderDto.ImageUrl
-//    };
-
-//    _context.Orders.Add(order);
-//    await _context.SaveChangesAsync();
-//    return order;
-//}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//public async Task<List<OrderDto>> GetAllOrdersForAdminAsync()
-//{
-//    var orders = await _orderRepository.GetAllOrdersForAdminAsync();
-
-//    return orders.Select(order => new OrderDto
-//    {
-//        Id = order.Id,
-//        UserEmail = order.User?.Email ?? "N/A",
-//        ServiceType = order.Product?.Name ?? "Unspecified",
-//        StatusType = order.StatusType,
-
-//        CreatedAt = order.CreatedAt,
-//        AdditionalNotes = order.AdditionalNotes
-//    }).ToList();
-//}
-
-//public Task<List<Order>> GetAllOrdersForadminasync()
-//{
-//    throw new NotImplementedException();
-//}
-
-//public async Task<OrderDto> UpdateOrderAsync(string id, UpdateOrderDto orderDto)
-//{
-//    var order = await _context.Orders.FindAsync(id);
-//    if (order == null)
-//    {
-//        throw new KeyNotFoundException("Order not found");
-//    }
-
-//    order.StatusType = order.StatusType;
-//    order.TotalPrice = orderDto.TotalPrice ?? order.TotalPrice;
-//    order.AdditionalNotes = orderDto.AdditionalNotes ?? order.AdditionalNotes;
-//    order.DateForConsultancy = orderDto.DateForConsultancy ?? order.DateForConsultancy;
-//    // Update other fields similarly
-//    await _context.SaveChangesAsync();
-
-//    return order.ToDto();
-//}

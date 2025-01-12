@@ -11,9 +11,10 @@ namespace EcoAppApi.Utils
             );
         Task<OrderDto?> GetMyOrderAsync(string userId);
         Task<OrderDto> CreateOrderAsync(CreateOrderDto createDto, string userId);
-        //Task<Order> CreateOrderAsync(CreateOrderDto orderDto, int userId);
-        //Task<List<Order>> GetAllOrdersForadminasync();
-
-        //Task<OrderDto> UpdateOrderAsync(int id, UpdateOrderDto orderDto);
+        Task<OrderDto?> GetLastOrderForUpdateAsync(string userId);
+        Task<bool> UpdateOrderAsync(int id, UpdateOrderDto updateOrderDto);
+        Task<bool> UpdateCurrentUserOrderAsync(string userId, UpdateOrderDto updateOrderDto);
+        Task<bool> DeleteLastOrderAsync(string userId);
+    ;
     }
 }

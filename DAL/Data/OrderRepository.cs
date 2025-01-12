@@ -58,7 +58,7 @@ namespace DAL.Data
             return await query.CountAsync();
         }
 
-        public async Task<Order?> GetLatestOrderAsync(string userId)
+        public async Task<Order?> GetLatestOrderByUserAsync(string userId)
         {
             return await _context.Orders
                 .Where(o => o.UserId == userId)
@@ -72,6 +72,35 @@ namespace DAL.Data
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
             return order; // Return the saved order with its ID populated
+        }
+
+        public async Task<Order> GetLastOrderByUserIdAsync(int id)
+        {
+            return await _context.Orders
+            .Include(o => o.User)
+            .Include(o => o.Product)
+            .FirstOrDefaultAsync(o => o.Id == id);
+        }
+
+        public async Task SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
+
+        public Task<Order?> GetLatestOrderAsync(string userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Order> GetOrderByIdAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task DeleteOrderAsync(Order order)
+        {
+            _context.Orders.Remove(order);
+            await _context.SaveChangesAsync();
         }
     }
 }

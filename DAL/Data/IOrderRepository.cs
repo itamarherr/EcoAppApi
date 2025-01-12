@@ -8,5 +8,8 @@ public interface IOrderRepository
     Task<int> GetTotalOrdersCountAsync(string? userId, string? userEmail);
     Task<Order?> GetLatestOrderAsync(string userId);
     Task<Order> CreateOrderAsync(Order order);
+    Task<Order> GetOrderByIdAsync(int id);
+    Task SaveChangesAsync();
+    Task DeleteOrderAsync(Order order);
 
 }
