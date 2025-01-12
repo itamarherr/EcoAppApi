@@ -44,7 +44,52 @@ public class OrderService : IOrderService
         }).ToList(), totalItems);
       
     }
+
+
+
+
+
+
+
+
+    public async Task<OrderDto?> GetMyOrderAsync(string userId)
+    {
+        var order = await _orderRepository.GetLatestOrderAsync(userId);
+
+        if (order == null)
+            return null;
+
+        return new OrderDto
+        {
+            Id = order.Id,
+            UserId = order.UserId,
+            UserName = order.User?.UserName ?? "Unknown",
+            CreatedAt = order.CreatedAt,
+            ServiceType = order.Product.Name ?? "Unknown",
+            City = order.City,
+            Street = order.Street,
+            Number = order.Number,
+            IsPrivateArea = order.IsPrivateArea,
+            DateForConsultancy = order.DateForConsultancy,
+            NumberOfTrees = order.NumberOfTrees,
+            AdditionalNotes = order.AdditionalNotes,
+            TotalPrice = order.TotalPrice,
+            UserEmail = order.User?.Email ?? "Unknown",
+            StatusType = order.StatusType,
+            ConsultancyType = order.ConsultancyType
+        };
+    }
 }
+
+
+
+
+
+
+
+
+
+
     //private readonly PricingService _pricingService;
     //private readonly DALContext _context = context;
 

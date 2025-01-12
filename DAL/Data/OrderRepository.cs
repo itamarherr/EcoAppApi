@@ -57,5 +57,15 @@ namespace DAL.Data
 
             return await query.CountAsync();
         }
+
+        public async Task<Order?> GetLatestOrderAsync(string userId)
+        {
+            return await _context.Orders
+                .Where(o => o.UserId == userId)
+                .Include(o => o.User)   
+                .Include(o => o.Product)
+                .OrderByDescending(o => o.CreatedAt)
+                .FirstOrDefaultAsync();
+        }
     }
 }

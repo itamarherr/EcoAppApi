@@ -65,47 +65,7 @@ namespace EcoAppApi.Controllers
                 _logger.LogError(ex, "Error fetching orders");
                 return StatusCode(500, new { message = "Internal server error", details = ex.Message });
             }
-            //    var validSortFields = new[] { "CreatedAt", "TotalPrice", "Id" };
-            //    if (!validSortFields.Contains(sortBy, StringComparer.OrdinalIgnoreCase))
-            //        return BadRequest(new { message = $"Invalid sort field: {sortBy}" });
-
-
-            //    var query = _context.Orders
-            //    .AsNoTracking()
-            //    .Include(o => o.User)
-            //    .AsQueryable();
-
-            //    if (!string.IsNullOrEmpty(userId))
-            //        query = query.Where(o => o.User.Id == userId);
-
-            //    if (!string.IsNullOrEmpty(userEmail))
-            //        query = query.Where(o => o.User.Email.Contains(userEmail));
-
-            //    var totalItems = await query.CountAsync();
-
-            //    query = descending
-            //   ? query.OrderByDescending(o => EF.Property<object>(o, sortBy))
-            //   : query.OrderBy(o => EF.Property<object>(o, sortBy));
-               
-            //    var orders = await query
-            //          .Skip((page - 1) * pageSize)
-            //          .Take(pageSize)
-            //          .Select(o => new OrderDto
-            //{
-            //        Id = o.Id,
-            //        UserEmail = o.User != null ? o.User.Email : null,
-            //        TotalPrice = o.TotalPrice,
-            //        CreatedAt = o.CreatedAt
-            //    }).ToListAsync();
-
-            //    return Ok( orders );
-            //}
-            //catch (Exception ex)
-            //{
-            //    _logger.LogError(ex, "Failed to fetch orders with params: page={Page}, pageSize={PageSize}, sortBy={SortBy}, descending={Descending}",
-            //        page, pageSize, sortBy, descending, userId, userEmail);
-            //    return StatusCode(500, new { message = "Internal server error", details = ex.Message });
-            //}
+   
         }
 
         //GET: api/Orders/5
@@ -133,47 +93,62 @@ namespace EcoAppApi.Controllers
         [HttpGet("my-orders")]
         public async Task<ActionResult<OrderDto>> GetCurrentUserOrders()
         {
-            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-    
-            if (string.IsNullOrEmpty(userIdClaim) )
+            try
             {
-                return Unauthorized(new { error = "User is not authenticated." });
-            }
+                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
-            var orders = await _context.Orders
-                .Where(o => o.UserId == userIdClaim)
-                 .Include(o => o.User)       // Ensure User is loaded
-                 .Include(o => o.Product)
-              .OrderByDescending(o => o.CreatedAt)
-              .ToListAsync();
-
-            foreach (var order in orders)
-            {
-                Console.WriteLine(value: $"Order ID: {order.Id}, User: {order.User?.UserName ?? "NULL"}, Product: {order.Product?.Name ?? "NULL"}, NumberOfTrees: {order.NumberOfTrees}");
-            }
-            var userOrders = orders.Select(o => new OrderDto
+                if (string.IsNullOrEmpty(userIdClaim))
                 {
-                    Id = o.Id,
-                    UserId = userIdClaim,
-                    UserName = o.User.UserName ?? "Unknown User",
-                    CreatedAt = o.CreatedAt,
-                    ServiceType = o.Product.Name ?? "Unknown Product", 
-                    NumberOfTrees = o.NumberOfTrees,
-                    City = o.City,
-                    Street = o.Street,
-                    Number = o.Number,
-                    ConsultancyType = o.ConsultancyType,
-                    StatusType = o.StatusType,
-                    IsPrivateArea = o.IsPrivateArea,
-                    DateForConsultancy = o.DateForConsultancy,
-                    AdditionalNotes = o.AdditionalNotes,
-                    TotalPrice = o.TotalPrice,
-                    UserEmail = o.User.Email ?? "No Email",
-                    //AdminNotes = o.AdminNotes
-                })
-                .FirstOrDefault();
+                    return Unauthorized(new { error = "User is not authenticated." });
+                }
 
-            return Ok(userOrders);
+                var order = await _orderService.GetMyOrderAsync(userIdClaim);
+                if (order == null)
+                {
+                    return NotFound(new { message = "No order found for the current user." });
+                }
+                return Ok(order);
+
+            } catch(Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching userws order");
+                return StatusCode(500, new { message = "Intenal server error" , details = ex.Message });    
+            }
+
+            //var orders = await _context.Orders
+            //    .Where(o => o.UserId == userIdClaim)
+            //     .Include(o => o.User)       // Ensure User is loaded
+            //     .Include(o => o.Product)
+            //  .OrderByDescending(o => o.CreatedAt)
+            //  .ToListAsync();
+
+            //foreach (var order in orders)
+            //{
+            //    Console.WriteLine(value: $"Order ID: {order.Id}, User: {order.User?.UserName ?? "NULL"}, Product: {order.Product?.Name ?? "NULL"}, NumberOfTrees: {order.NumberOfTrees}");
+            //}
+            //var userOrders = orders.Select(o => new OrderDto
+            //    {
+            //        Id = o.Id,
+            //        UserId = userIdClaim,
+            //        UserName = o.User.UserName ?? "Unknown User",
+            //        CreatedAt = o.CreatedAt,
+            //        ServiceType = o.Product.Name ?? "Unknown Product", 
+            //        NumberOfTrees = o.NumberOfTrees,
+            //        City = o.City,
+            //        Street = o.Street,
+            //        Number = o.Number,
+            //        ConsultancyType = o.ConsultancyType,
+            //        StatusType = o.StatusType,
+            //        IsPrivateArea = o.IsPrivateArea,
+            //        DateForConsultancy = o.DateForConsultancy,
+            //        AdditionalNotes = o.AdditionalNotes,
+            //        TotalPrice = o.TotalPrice,
+            //        UserEmail = o.User.Email ?? "No Email",
+            //        //AdminNotes = o.AdminNotes
+            //    })
+            //    .FirstOrDefault();
+
+            //return Ok(userOrders);
         }
 
         [Authorize]
