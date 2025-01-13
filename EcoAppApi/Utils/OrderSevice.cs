@@ -27,7 +27,7 @@ public class OrderService : IOrderService
         }
         Console.WriteLine($"userId: {userId}, userEmail: {userEmail}, sortBy: {sortBy}, descending: {descending}, page: {page}, pageSize: {pageSize}");
 
-        var orders = await _orderRepository.GetOrdersAsync(userId, userEmail, sortBy, descending, page, pageSize);
+        var orders = await _orderRepository.GetPaginatedOrdersAsync(userId, userEmail, sortBy, descending, page, pageSize);
 
         if (orders == null)
         {
@@ -39,8 +39,24 @@ public class OrderService : IOrderService
             Id = o.Id,
             UserEmail = o.User?.Email ?? "Unknown",
             TotalPrice = o.TotalPrice,
-            CreatedAt = o.CreatedAt
+            CreatedAt = o.CreatedAt,
 
+          
+            UserId = o.UserId,
+            UserName = o.User?.UserName ?? "Unknown",
+           
+            ServiceType = o.Product.Name ?? "Unknown",
+            City = o.City,
+            Street = o.Street,
+            Number = o.Number,
+            IsPrivateArea = o.IsPrivateArea,
+            DateForConsultancy = o.DateForConsultancy,
+            NumberOfTrees = o.NumberOfTrees,
+            AdditionalNotes = o.AdditionalNotes,
+           
+          
+            StatusType = o.StatusType,
+            ConsultancyType = o.ConsultancyType
         }).ToList(), totalItems);
       
     }
@@ -126,7 +142,7 @@ public class OrderService : IOrderService
 
         ApplyUpdates(order, updateOrderDto);
 
-        await _orderRepository.SaveChangesAsync();
+        await _context.SaveChangesAsync();
         return true;
     }
 
@@ -140,7 +156,7 @@ public class OrderService : IOrderService
 
         ApplyUpdates(order, updateOrderDto);
 
-        await _orderRepository.SaveChangesAsync();
+        await _context.SaveChangesAsync();
         return true;
     }
     private void ApplyUpdates(Order order, UpdateOrderDto updateOrderDto)

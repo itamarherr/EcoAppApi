@@ -55,6 +55,11 @@ namespace EcoAppApi.Controllers
         {
             try
             {
+                //var validSortProperties = new[] { "CreatedAt", "TotalPrice" };
+                //if (!validSortProperties.Contains(sortBy))
+                //{
+                //    return BadRequest(new { message = "Invalid sortBy parameter." });
+                //}
                 if (page <= 0 || pageSize <= 0)
                     return BadRequest(new { message = "Page and pageSize must be greater than zero." });
                 var (orders, totalItems) = await _orderService.GetOrdersAsync(userId, userEmail, sortBy, descending, page, pageSize);
@@ -74,7 +79,10 @@ namespace EcoAppApi.Controllers
             var order = await _context.Orders
                  .Include(o => o.User)
                  .FirstOrDefaultAsync(o => o.Id == id);
-
+            //if (id <= 0)
+            //{
+            //    return BadRequest(new { message = "Invalid order ID." });
+            //}
             if (order == null)
             {
                 return NotFound();
@@ -100,7 +108,10 @@ namespace EcoAppApi.Controllers
                 {
                     return Unauthorized(new { error = "User is not authenticated." });
                 }
-
+                //if (!Guid.TryParse(userIdClaim, out _))
+                //{
+                //    return BadRequest(new { message = "Invalid user ID format." });
+                //}
                 var order = await _orderService.GetMyOrderAsync(userIdClaim);
                 if (order == null)
                 {

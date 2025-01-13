@@ -96,7 +96,8 @@ namespace EcoAppApi
                     In = ParameterLocation.Header,
                     Description = "Please enter JWT with Bearer into field",
                     Name = "Authorization",
-                    Type = SecuritySchemeType.ApiKey
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
                 });
 
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -108,7 +109,10 @@ namespace EcoAppApi
                             {
                              Type = ReferenceType.SecurityScheme,
                               Id = "Bearer"
-                             }
+                             },
+                             Scheme = "Bearer", // Include Scheme here as well for clarity
+                             Name = "Bearer",
+                             In = ParameterLocation.Header
                             },
                              new string[] {}
                    }

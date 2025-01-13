@@ -12,11 +12,14 @@ namespace DAL.Data
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task<List<Order>> GetOrdersAsync(string? userId, string? userEmail, string sortBy, bool descending, int page, int pageSize)
+        public async Task<List<Order>> GetPaginatedOrdersAsync(string? userId, string? userEmail, string sortBy, bool descending, int page, int pageSize)
         {
 
             //var query = _context.Orders.Include(o => o.UserId).AsQueryable();
-            var query = _context.Orders.Include(o => o.User).AsQueryable();
+            var query = _context.Orders
+                .Include(o => o.User)
+                .Include(o => o.Product)
+                .AsQueryable();
 
             if (!string.IsNullOrEmpty(userId))
                 query = query.Where(o => o.User.Id == userId);
@@ -58,15 +61,15 @@ namespace DAL.Data
             return await query.CountAsync();
         }
 
-        public async Task<Order?> GetLatestOrderByUserAsync(string userId)
-        {
-            return await _context.Orders
-                .Where(o => o.UserId == userId)
-                .Include(o => o.User)
-                .Include(o => o.Product)
-                .OrderByDescending(o => o.CreatedAt)
-                .FirstOrDefaultAsync();
-        }
+        //public async Task<Order?> GetLatestOrderByUserAsync(string userId)
+        //{
+        //    return await _context.Orders
+        //        .Where(o => o.UserId == userId)
+        //        .Include(o => o.User)
+        //        .Include(o => o.Product)
+        //        .OrderByDescending(o => o.CreatedAt)
+        //        .FirstOrDefaultAsync();
+        //}
         public async Task<Order> CreateOrderAsync(Order order)
         {
             _context.Orders.Add(order);
@@ -74,18 +77,10 @@ namespace DAL.Data
             return order; // Return the saved order with its ID populated
         }
 
-        public async Task<Order> GetLastOrderByUserIdAsync(int id)
-        {
-            return await _context.Orders
-            .Include(o => o.User)
-            .Include(o => o.Product)
-            .FirstOrDefaultAsync(o => o.Id == id);
-        }
-
-        public async Task SaveChangesAsync()
-        {
-            await _context.SaveChangesAsync();
-        }
+        //public async Task SaveChangesAsync()
+        //{
+        //    await _context.SaveChangesAsync();
+        //}
 
         public async Task<Order?> GetLatestOrderAsync(string userId)
         {
@@ -97,9 +92,12 @@ namespace DAL.Data
                 .FirstOrDefaultAsync();
         }
 
-        public Task<Order> GetOrderByIdAsync(int id)
+        public async Task<Order> GetOrderByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _context.Orders
+      .Include(o => o.User)   
+      .Include(o => o.Product) 
+      .FirstOrDefaultAsync(o => o.Id == id);
         }
 
         public async Task DeleteOrderAsync(Order order)
