@@ -57,6 +57,64 @@ public class OrderServiceTests
     }
 
     /// <summary>
+    /// Verifies that the GetLatestOrderAsync method retrieves the latest order
+    /// (based on CreatedAt) for a specific user.
+    /// Ensures the returned order matches the expected data.
+    /// </summary>
+    [Fact]
+    public async Task GetLatestOrderAsync_ShouldReturnLatestOrderForUser()
+    {
+        // Arrange: seed Multiple orders for the Same user.
+        await SeedTestDataAsync();
+        var latestOrder = new Order
+        {
+            Id = 2,
+            UserId = "user1",
+            CreatedAt = DateTime.UtcNow.AddDays(1)
+        };
+        _context.Orders.Add(latestOrder);
+        await _context.SaveChangesAsync();
+
+        //Act: Fatch the latest order for the user.
+        var result = await _orderRepository.GetLatestOrderAsync("user1");
+
+        Assert.NotNull(result);
+        Assert.Equal(latestOrder.Id, result.Id);
+    }
+
+    /// <summary>
+    /// Verifies that the GetPaginatedOrdersAsync method retrieves all orders
+    /// without applying user or email filters.
+    /// Ensures the total count of returned orders matches the expected number.
+    /// </summary>
+    [Fact]
+    public async Task GetOrdersAsync_ShouldReturnAllOrders()
+    {
+        // Arrange: seed Multiple orders.
+        await SeedTestDataAsync();
+        var additionalOrder = new Order
+        {
+            Id = 2,
+            UserId = "user2",
+            CreatedAt = DateTime.UtcNow
+        };
+        _context.Orders.Add(additionalOrder);
+        await _context.SaveChangesAsync();
+
+        //Act: Fatch the latest order for the user.
+        var result = await _orderRepository.GetPaginatedOrdersAsync(
+          userId: null,
+          userEmail: null,
+          sortBy: "CreatedAt",
+          descending: false,
+          page: 1,
+          pageSize: int.MaxValue
+          );
+        // Assert: Ensure all orders are returned.
+        Assert.NotNull(result);
+        Assert.Equal(2, result.Count);
+    }
+    /// <summary>
     /// Tests the creation of a new order.
     /// Ensures the order is saved correctly and all properties match the expected values.
     /// </summary>
@@ -299,12 +357,10 @@ public class OrderServiceTests
         // Assert: Ensure the deletion was successful.
         Assert.True(result);
 
-
         // Additional Assert: Ensure the order no longer exists in the database.
         var deleteOrder = await _orderRepository.GetOrderByIdAsync(existingOrder.Id);
 
         Assert.NotNull(existingOrder); // The order should be null as it was deleted.
-
     }
 
     /// <summary>
