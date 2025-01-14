@@ -35,21 +35,21 @@ The test project is implemented using **xUnit** as the testing framework and rel
 
 Tests are organized to align with the key components of the backend:
 
-**Services: Tests for service layer methods (e.g., OrderService).
-**Repositories: Direct validation of database interaction logic.
-**Utilities: Tests for pricing calculations and data transformations.
+- Services: Tests for service layer methods (e.g., OrderService).
+- Repositories: Direct validation of database interaction logic.
+- Utilities: Tests for pricing calculations and data transformations.
 
 ## Naming Conventions
 Test methods are named using the following pattern:
 
-''[MethodName]_[Condition]_[ExpectedOutcome]
-### Example:
+[MethodName]_[Condition]_[ExpectedOutcome]
+### Example:**
 
-**CreateOrder_ShouldAddOrderToDatabase
-**DeleteOrder_ShouldThrowExceptionWhenOrderNotFound
+- CreateOrder_ShouldAddOrderToDatabase
+- DeleteOrder_ShouldThrowExceptionWhenOrderNotFound
 ## Additional Notes
-**Seed Data: Tests use a dynamic SeedTestDataAsync method for flexibility and improved readability.
-**Documentation: Each test includes XML comments to clarify its purpose, input, and expected outcomes.
+- Seed Data: Tests use a dynamic SeedTestDataAsync method for flexibility and improved readability.
+- Documentation: Each test includes XML comments to clarify its purpose, input, and expected outcomes.
 
 For questions or contributions, please contact the repository maintainer.
 
