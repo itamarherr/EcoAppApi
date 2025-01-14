@@ -27,13 +27,11 @@ namespace DAL.Data
             if (!string.IsNullOrEmpty(userEmail))
                 query = query.Where(o => o.User.Email.Contains(userEmail));
 
-            query = descending
-        ? query.OrderByDescending(o => EF.Property<object>(o, sortBy))
-        : query.OrderBy(o => EF.Property<object>(o, sortBy));
+                query = descending
+               ? query.OrderByDescending(o => EF.Property<object>(o, sortBy))
+               : query.OrderBy(o => EF.Property<object>(o, sortBy));
 
-            // query = descending
-            //? query.OrderByDescending(o => EF.Property<object>(o, sortBy))
-            //: query.OrderBy(o => EF.Property<object>(o, sortBy));
+       
 
             return await query
             .Skip((page - 1) * pageSize)
@@ -74,14 +72,11 @@ namespace DAL.Data
         {
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
-            return order; // Return the saved order with its ID populated
+            return order; 
         }
 
-        //public async Task SaveChangesAsync()
-        //{
-        //    await _context.SaveChangesAsync();
-        //}
-
+      
+        // This method is for regular users to fetch their latest order only
         public async Task<Order?> GetLatestOrderAsync(string userId)
         {
             return await _context.Orders
@@ -91,13 +86,13 @@ namespace DAL.Data
                 .OrderByDescending(o => o.CreatedAt)
                 .FirstOrDefaultAsync();
         }
-
+        // This method is for admin use to fetch any order by its ID
         public async Task<Order> GetOrderByIdAsync(int id)
         {
             return await _context.Orders
-      .Include(o => o.User)   
-      .Include(o => o.Product) 
-      .FirstOrDefaultAsync(o => o.Id == id);
+          .Include(o => o.User)   
+          .Include(o => o.Product) 
+          .FirstOrDefaultAsync(o => o.Id == id);
         }
 
         public async Task DeleteOrderAsync(Order order)

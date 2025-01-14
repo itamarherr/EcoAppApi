@@ -21,6 +21,7 @@ using static NuGet.Packaging.PackagingConstants;
 
 namespace EcoAppApi.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class OrdersController : ControllerBase
@@ -55,16 +56,16 @@ namespace EcoAppApi.Controllers
         {
             try
             {
-                //var validSortProperties = new[] { "CreatedAt", "TotalPrice" };
-                //if (!validSortProperties.Contains(sortBy))
-                //{
-                //    return BadRequest(new { message = "Invalid sortBy parameter." });
-                //}
+                var validSortProperties = new[] { "CreatedAt", "TotalPrice" };
+                if (!validSortProperties.Contains(sortBy))
+                {
+                    return BadRequest(new { message = "Invalid sortBy parameter." });
+                }
                 if (page <= 0 || pageSize <= 0)
                     return BadRequest(new { message = "Page and pageSize must be greater than zero." });
-                var (orders, totalItems) = await _orderService.GetOrdersAsync(userId, userEmail, sortBy, descending, page, pageSize);
+                var (orderDtos, totalItems) = await _orderService.GetOrdersAsync(userId, userEmail, sortBy, descending, page, pageSize);
 
-                return Ok(new { orders, totalItems });
+                return Ok(new { orders = orderDtos, totalItems });
             } catch (Exception ex)
             {
                 _logger.LogError(ex, "Error fetching orders");
@@ -76,13 +77,14 @@ namespace EcoAppApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Order>> GetOrder(int id)
         {
+            if (id <= 0)
+            {
+                return BadRequest(new { message = "Invalid order ID." });
+            }
             var order = await _context.Orders
                  .Include(o => o.User)
                  .FirstOrDefaultAsync(o => o.Id == id);
-            //if (id <= 0)
-            //{
-            //    return BadRequest(new { message = "Invalid order ID." });
-            //}
+          
             if (order == null)
             {
                 return NotFound();
@@ -93,10 +95,10 @@ namespace EcoAppApi.Controllers
                 UserEmail = order.User != null ? order.User.Email : null,
                 order.CreatedAt
             };
-            return Ok(response);
+            return Ok(order.ToDto());
         }
 
-        [Authorize]
+        
         [HttpGet("my-orders")]
         public async Task<ActionResult<OrderDto>> GetCurrentUserOrders()
         {
@@ -108,10 +110,10 @@ namespace EcoAppApi.Controllers
                 {
                     return Unauthorized(new { error = "User is not authenticated." });
                 }
-                //if (!Guid.TryParse(userIdClaim, out _))
-                //{
-                //    return BadRequest(new { message = "Invalid user ID format." });
-                //}
+                if (!Guid.TryParse(userIdClaim, out _))
+                {
+                    return BadRequest(new { message = "Invalid user ID format." });
+                }
                 var order = await _orderService.GetMyOrderAsync(userIdClaim);
                 if (order == null)
                 {
@@ -126,7 +128,7 @@ namespace EcoAppApi.Controllers
             }
         }
 
-        [Authorize]
+        
         [HttpGet("my-orders/for-update")]
         public async Task<ActionResult<OrderDto>> GetLastOrdersForUpdates()
         {
@@ -151,6 +153,15 @@ namespace EcoAppApi.Controllers
       
         public async Task<IActionResult> UpdateCurrentUserOrder( [FromBody] UpdateOrderDto updateOrderDto)
         {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+
+                return BadRequest(new { errors });
+            }
             var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
             if (string.IsNullOrEmpty(userIdClaim))
