@@ -51,4 +51,4 @@ Tests are organized to align with the key components of the backend:
 For questions or contributions, please contact the repository maintainer.
 
 
-
+**Note**: This project is for educational purposes only. Any keys or tokens included are invalid and should not be used for production purposes.
