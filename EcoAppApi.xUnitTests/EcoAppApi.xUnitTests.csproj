@@ -39,10 +39,4 @@
     <ProjectReference Include="..\EcoAppApi\EcoAppApi.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="DataTests\IsOddOrEvenTestData.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>
