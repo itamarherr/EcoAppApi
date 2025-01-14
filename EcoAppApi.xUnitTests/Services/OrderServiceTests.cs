@@ -1,7 +1,6 @@
 ﻿using DAL.Data;
 using DAL.enums;
 using DAL.Models;
-using EcoAppApi.Calculations;
 using EcoAppApi.DTOs;
 using EcoAppApi.Utils;
 using Microsoft.EntityFrameworkCore;
@@ -232,7 +231,9 @@ public class OrderServiceTests
     }
 
     /// <summary>
-    /// Verifies that updating an order with invalid data (e.g., empty AdminNotes or invalid date) throws an ArgumentException.
+    /// Ensures that attempting to update an order with an invalid date
+    /// (e.g., a past date) does not update the DateForConsultancy field.
+    /// Valid fields in the DTO are updated as expected.
     /// </summary>
     [Fact]
     public async Task Update_ShouldNotChangeDateForInvalidDate()
@@ -257,7 +258,8 @@ public class OrderServiceTests
     }
 
     /// <summary>
-    /// Verifies that updating an order with invalid data (e.g., empty AdminNotes or invalid date) throws an ArgumentException.
+    /// Verifies that updating an order with invalid data (e.g., empty AdminNotes 
+    /// or an invalid date) throws an ArgumentException and the update is rejected.
     /// </summary>
     [Fact]
     public async Task UpdateOrder_ShouldFailForInvalidData()
