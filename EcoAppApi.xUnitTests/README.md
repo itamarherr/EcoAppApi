@@ -39,10 +39,7 @@ Tests are organized to align with the key components of the backend:
 - Repositories: Direct validation of database interaction logic.
 - Utilities: Tests for pricing calculations and data transformations.
 
-## Naming Conventions
-**Test methods are named using the following pattern:**
-```css
-[MethodName]_[Condition]_[ExpectedOutcome]
+
 ### Example:
 
 - CreateOrder_ShouldAddOrderToDatabase
