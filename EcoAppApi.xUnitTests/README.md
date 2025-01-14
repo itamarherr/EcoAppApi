@@ -40,10 +40,10 @@ Tests are organized to align with the key components of the backend:
 - Utilities: Tests for pricing calculations and data transformations.
 
 ## Naming Conventions
-Test methods are named using the following pattern:
-
+**Test methods are named using the following pattern:**
+```css
 [MethodName]_[Condition]_[ExpectedOutcome]
-### Example:**
+### Example:
 
 - CreateOrder_ShouldAddOrderToDatabase
 - DeleteOrder_ShouldThrowExceptionWhenOrderNotFound
