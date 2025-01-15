@@ -8,7 +8,6 @@ public class PricingService
     {
         decimal basePrice = consutancyType switch
         {
-           
             Purpose.BeforeConstruction => 1000m,
             Purpose.Dislocations => 1500m,
             Purpose.TreesIllness => 2000m,

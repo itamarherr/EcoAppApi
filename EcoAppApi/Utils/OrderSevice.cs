@@ -1,13 +1,11 @@
 ﻿using DAL.Data;
-using DAL.enums;
 using DAL.Models;
 using EcoAppApi.DTOs;
-using Microsoft.OpenApi.Extensions;
 
 namespace EcoAppApi.Utils;
 
 public class OrderService : IOrderService
-  
+
 {
     private readonly IOrderRepository _orderRepository;
     private readonly PricingService _pricingService;
@@ -15,74 +13,73 @@ public class OrderService : IOrderService
 
     public OrderService(IOrderRepository orderRepository, PricingService pricingService, DALContext context)
     {
-        _orderRepository = orderRepository ?? throw new ArgumentNullException(nameof(orderRepository));
-        _pricingService = pricingService ?? throw new ArgumentNullException(nameof(pricingService));
-        _context = context ?? throw new ArgumentNullException(nameof(context));
+        _orderRepository = orderRepository ?? throw new ArgumentNullException (nameof (orderRepository));
+        _pricingService = pricingService ?? throw new ArgumentNullException (nameof (pricingService));
+        _context = context ?? throw new ArgumentNullException (nameof (context));
     }
     public async Task<(List<OrderDto>, int)> GetOrdersAsync(string? userId, string? userEmail, string sortBy, bool descending, int page, int pageSize)
     {
         if (page <= 0 || pageSize <= 0)
         {
-            throw new ArgumentException("Page and pageSize must be greater than zero.");
+            throw new ArgumentException ("Page and pageSize must be greater than zero.");
         }
         var validSortProperties = new[] { "CreatedAt", "TotalPrice" };
-        if (!validSortProperties.Contains(sortBy))
+        if (!validSortProperties.Contains (sortBy))
         {
-            throw new ArgumentException("Invalid sortBy parameter.");
+            throw new ArgumentException ("Invalid sortBy parameter.");
         }
         if (_orderRepository == null)
         {
-            throw new InvalidOperationException("Order repository is not initialized.");
+            throw new InvalidOperationException ("Order repository is not initialized.");
         }
-        Console.WriteLine($"userId: {userId}, userEmail: {userEmail}, sortBy: {sortBy}, descending: {descending}, page: {page}, pageSize: {pageSize}");
+        Console.WriteLine ($"userId: {userId}, userEmail: {userEmail}, sortBy: {sortBy}, descending: {descending}, page: {page}, pageSize: {pageSize}");
 
-        var orders = await _orderRepository.GetPaginatedOrdersAsync(userId, userEmail, sortBy, descending, page, pageSize);
+        var orders = await _orderRepository.GetPaginatedOrdersAsync (userId, userEmail, sortBy, descending, page, pageSize);
 
         if (orders == null)
         {
-            throw new InvalidOperationException("Failed to retrieve orders.");
+            throw new InvalidOperationException ("Failed to retrieve orders.");
         }
-        var totalItems = await _orderRepository.GetTotalOrdersCountAsync(userId, userEmail);
-        return (orders.Select(o => o.ToDto()).ToList(), totalItems);
+        var totalItems = await _orderRepository.GetTotalOrdersCountAsync (userId, userEmail);
+        return (orders.Select (o => o.ToDto ()).ToList (), totalItems);
 
 
     }
 
     public async Task<OrderDto?> GetMyOrderAsync(string userId)
     {
-        if (string.IsNullOrEmpty(userId))
+        if (string.IsNullOrEmpty (userId))
         {
-            throw new ArgumentException("UserId is required.");
+            throw new ArgumentException ("UserId is required.");
         }
-        var order = await _orderRepository.GetLatestOrderAsync(userId);
+        var order = await _orderRepository.GetLatestOrderAsync (userId);
 
         if (order == null)
         {
-            throw new ArgumentException("No orders found for the given user.");
+            throw new ArgumentException ("No orders found for the given user.");
         }
 
-        return order.ToDto();
+        return order.ToDto ();
     }
     public async Task<OrderDto> CreateOrderAsync(CreateOrderDto createDto, string userId)
     {
-        var totalPrice = _pricingService.CalculatePrice(
+        var totalPrice = _pricingService.CalculatePrice (
                  createDto.ConsultancyType,
                  createDto.NumberOfTrees,
                  createDto.IsPrivateArea
                  );
-            var user = await _context.Users.FindAsync(userId);
-            var product = await _context.Products.FindAsync(createDto.ProductId);
+        var user = await _context.Users.FindAsync (userId);
+        var product = await _context.Products.FindAsync (createDto.ProductId);
 
-            if (user == null || product == null)
-            {
-                throw new ArgumentException("Invalid UserId or ProductId");
-            }
+        if (user == null || product == null)
+        {
+            throw new ArgumentException ("Invalid UserId or ProductId");
+        }
 
         var order = new Order
         {
             UserId = userId,
             ProductId = createDto.ProductId,
-            //ImageUrl = createDto.ImageUrl,
             AdditionalNotes = createDto.AdditionalNotes,
             TotalPrice = totalPrice,
             NumberOfTrees = createDto.NumberOfTrees,
@@ -97,57 +94,57 @@ public class OrderService : IOrderService
             StatusType = createDto.StatusType,
 
         };
-        var saveOrder = await _orderRepository.CreateOrderAsync(order);
-        return saveOrder.ToDto();
+        var saveOrder = await _orderRepository.CreateOrderAsync (order);
+        return saveOrder.ToDto ();
     }
 
     public async Task<OrderDto?> GetLastOrderForUpdateAsync(string userId)
     {
-        var lastOrder = await _orderRepository.GetLatestOrderAsync(userId);
-        return lastOrder?.ToDto(); 
+        var lastOrder = await _orderRepository.GetLatestOrderAsync (userId);
+        return lastOrder?.ToDto ();
     }
 
     public async Task<bool> UpdateOrderAsync(int id, UpdateOrderDto updateOrderDto)
     {
-        var order = await _orderRepository.GetOrderByIdAsync(id);
+        var order = await _orderRepository.GetOrderByIdAsync (id);
         if (order == null)
         {
-            throw new ArgumentException("Order not found");
+            throw new ArgumentException ("Order not found");
         }
-        if (string.IsNullOrEmpty(updateOrderDto.AdminNotes) &&
+        if (string.IsNullOrEmpty (updateOrderDto.AdminNotes) &&
         updateOrderDto.DateForConsultancy <= DateTime.UtcNow)
         {
-            throw new ArgumentException("Invalid update data.");
+            throw new ArgumentException ("Invalid update data.");
         }
 
-        ApplyUpdates(order, updateOrderDto);
+        ApplyUpdates (order, updateOrderDto);
 
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync ();
         return true;
     }
 
     public async Task<bool> UpdateCurrentUserOrderAsync(string userId, UpdateOrderDto updateOrderDto)
     {
-        if (string.IsNullOrEmpty(userId))
+        if (string.IsNullOrEmpty (userId))
         {
-            throw new ArgumentException("UserId is required.");
+            throw new ArgumentException ("UserId is required.");
         }
 
-        var order = await _orderRepository.GetOrderByIdAsync(updateOrderDto.Id);
+        var order = await _orderRepository.GetOrderByIdAsync (updateOrderDto.Id);
         if (order == null || order.UserId != userId)
         {
-            throw new ArgumentException("Order not found or user does not have permission.");
+            throw new ArgumentException ("Order not found or user does not have permission.");
         }
 
-        ApplyUpdates(order, updateOrderDto);
+        ApplyUpdates (order, updateOrderDto);
 
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync ();
         return true;
     }
     private void ApplyUpdates(Order order, UpdateOrderDto updateOrderDto)
     {
         // Update admin notes
-        if (!string.IsNullOrEmpty(updateOrderDto.AdminNotes))
+        if (!string.IsNullOrEmpty (updateOrderDto.AdminNotes))
             order.AdminNotes = updateOrderDto.AdminNotes;
 
         // Update total price only if provided
@@ -155,7 +152,7 @@ public class OrderService : IOrderService
             order.TotalPrice = updateOrderDto.TotalPrice.Value;
 
         // Update additional notes
-        if (!string.IsNullOrEmpty(updateOrderDto.AdditionalNotes))
+        if (!string.IsNullOrEmpty (updateOrderDto.AdditionalNotes))
             order.AdditionalNotes = updateOrderDto.AdditionalNotes;
 
         // Update number of trees only if positive
@@ -163,10 +160,10 @@ public class OrderService : IOrderService
             order.NumberOfTrees = updateOrderDto.NumberOfTrees;
 
         // Update city and street if not empty
-        if (!string.IsNullOrEmpty(updateOrderDto.City))
+        if (!string.IsNullOrEmpty (updateOrderDto.City))
             order.City = updateOrderDto.City;
 
-        if (!string.IsNullOrEmpty(updateOrderDto.Street))
+        if (!string.IsNullOrEmpty (updateOrderDto.Street))
             order.Street = updateOrderDto.Street;
 
         // Update number only if positive
@@ -180,25 +177,25 @@ public class OrderService : IOrderService
         // Update date for consultancy (optional: validate if it's in the future)
         if (updateOrderDto.DateForConsultancy > DateTime.UtcNow)
             order.DateForConsultancy = updateOrderDto.DateForConsultancy;
-       
+
         if (updateOrderDto.StatusType.HasValue)
             order.StatusType = updateOrderDto.StatusType.Value;
     }
 
     public async Task<bool> DeleteLastOrderAsync(string userId)
     {
-        if (string.IsNullOrEmpty(userId))
+        if (string.IsNullOrEmpty (userId))
         {
-            throw new ArgumentException("UserId is required.");
+            throw new ArgumentException ("UserId is required.");
         }
-        var order = await _orderRepository.GetLatestOrderAsync(userId);
+        var order = await _orderRepository.GetLatestOrderAsync (userId);
 
         if (order == null)
         {
-            throw new ArgumentException("No orders found for the given user.");
+            throw new ArgumentException ("No orders found for the given user.");
         }
 
-        await _orderRepository.DeleteOrderAsync(order);
+        await _orderRepository.DeleteOrderAsync (order);
         return true;
     }
 }

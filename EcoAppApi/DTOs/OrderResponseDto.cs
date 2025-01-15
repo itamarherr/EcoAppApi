@@ -5,7 +5,7 @@
         public bool IsPrivateArea { get; set; }
         public string IsPrivateAreaString
         {
-            get => IsPrivateArea ? "Yes" : "No";  
+            get => IsPrivateArea ? "Yes" : "No";
         }
     }
 }

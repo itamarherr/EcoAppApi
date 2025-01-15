@@ -1,5 +1,4 @@
-﻿using DAL.Models;
-using EcoAppApi.DTOs;
+﻿using EcoAppApi.DTOs;
 
 namespace EcoAppApi.Utils
 {
@@ -15,6 +14,6 @@ namespace EcoAppApi.Utils
         Task<bool> UpdateOrderAsync(int id, UpdateOrderDto updateOrderDto);
         Task<bool> UpdateCurrentUserOrderAsync(string userId, UpdateOrderDto updateOrderDto);
         Task<bool> DeleteLastOrderAsync(string userId);
-    
+
     }
 }

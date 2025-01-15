@@ -1,14 +1,13 @@
 ﻿
-using Microsoft.EntityFrameworkCore;
 using DAL.Models;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
-using DAL.enums;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Data;
 
 public class DALContext(DbContextOptions<DALContext> options) :
-    IdentityDbContext<AppUser, IdentityRole<string>, string>(options)
+    IdentityDbContext<AppUser, IdentityRole<string>, string> (options)
 {
     public DbSet<Product> Products { get; set; } = default!;
 
@@ -16,24 +15,22 @@ public class DALContext(DbContextOptions<DALContext> options) :
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        base.OnModelCreating(modelBuilder);
+        base.OnModelCreating (modelBuilder);
 
-        modelBuilder.Entity<Order>(entity =>
+        modelBuilder.Entity<Order> (entity =>
         {
-            entity.HasOne(o => o.User)
-           .WithMany(u => u.Orders)
-           .HasForeignKey(o => o.UserId);
+            entity.HasOne (o => o.User)
+           .WithMany (u => u.Orders)
+           .HasForeignKey (o => o.UserId);
 
-            entity.HasOne(o => o.Product)
-            .WithMany(s => s.Orders)
-            .HasForeignKey(o => o.ProductId);
+            entity.HasOne (o => o.Product)
+            .WithMany (s => s.Orders)
+            .HasForeignKey (o => o.ProductId);
 
-            //entity.Property(o => o.ImageUrl).IsRequired();
+            entity.Property (o => o.CreatedAt)
+       .HasColumnName ("CreatedAt");
 
-            entity.Property(o => o.CreatedAt)
-       .HasColumnName("CreatedAt");
-
-            entity.HasData(new[] {
+            entity.HasData (new[] {
 
               new Order
         {
@@ -42,8 +39,6 @@ public class DALContext(DbContextOptions<DALContext> options) :
             ProductId = 1,
            DateForConsultancy = DateTime.Now,
             CreatedAt = DateTime.UtcNow,
-            //StatusType = "pending",
-            //ImageUrl = "https://example.com/images/order1.png",
             City = "SampleCity",
             Street = "SampleStreet",
             Number = 123
@@ -55,18 +50,15 @@ public class DALContext(DbContextOptions<DALContext> options) :
             ProductId = 1,
             DateForConsultancy = DateTime.Now,
             CreatedAt = DateTime.UtcNow,
-            //StatusType = "completed",
-            //ImageUrl = "https://example.com/images/order2.png",
             City = "AnotherCity",
             Street = "AnotherStreet",
             Number = 456
         }
-                        });
-
+             });
         });
 
-        modelBuilder.Entity<Product>()
-            .HasData(new[] {
+        modelBuilder.Entity<Product> ()
+            .HasData (new[] {
                 new Product
                 {
                         Id = 1,
@@ -77,11 +69,10 @@ public class DALContext(DbContextOptions<DALContext> options) :
                 },
             });
 
-
-        var hasher = new PasswordHasher<AppUser>();
-        modelBuilder.Entity<IdentityRole<string>>()
-            .HasData(new[] {
-                new IdentityRole<string>()
+        var hasher = new PasswordHasher<AppUser> ();
+        modelBuilder.Entity<IdentityRole<string>> ()
+            .HasData (new[] {
+                new IdentityRole   <string>()
                 {
                     Id = "1",
                     Name = "admin",
@@ -90,8 +81,8 @@ public class DALContext(DbContextOptions<DALContext> options) :
                 }
             });
 
-        modelBuilder.Entity<AppUser>()
-          .HasData(new[] {
+        modelBuilder.Entity<AppUser> ()
+          .HasData (new[] {
               new AppUser()
               {
                   Id = "1",
@@ -103,7 +94,7 @@ public class DALContext(DbContextOptions<DALContext> options) :
                   PasswordHash = hasher.HashPassword(null, "12345")
               }
           });
-        modelBuilder.Entity<IdentityUserRole<string>>().HasData(new[]
+        modelBuilder.Entity<IdentityUserRole<string>> ().HasData (new[]
         {
              new IdentityUserRole<string>()
             {
@@ -112,7 +103,6 @@ public class DALContext(DbContextOptions<DALContext> options) :
             }
 
         });
-           
-        
+
     }
 }

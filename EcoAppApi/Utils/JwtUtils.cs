@@ -8,53 +8,48 @@ namespace EcoAppApi.Utils;
 
 public class JwtUtils(IConfiguration configuration, UserManager<AppUser> userManager)
 {
-   
 
     public async Task<string> CreateToken(AppUser user)
     {
-        Console.WriteLine("Hello");
-        var jwtSettings = configuration.GetSection("JwtSettings");
-        var secretKey = jwtSettings["SecretKey"] ?? throw new Exception("Secret key must be set in app settings");
+        Console.WriteLine ("Hello");
+        var jwtSettings = configuration.GetSection ("JwtSettings");
+        var secretKey = jwtSettings["SecretKey"] ?? throw new Exception ("Secret key must be set in app settings");
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+        var key = new SymmetricSecurityKey (Encoding.UTF8.GetBytes (secretKey));
 
-      
+
 
         //JWT is a collection of claims
-        var claims = new List<Claim>()
+        var claims = new List<Claim> ()
         {
-        
             new Claim(ClaimTypes.NameIdentifier, user.Id),
-             //new Claim("userId", user.Id),
-                //new Claim(ClaimTypes.Name, user.UserName),
-            //new Claim(JwtRegisteredClaimNames.Email, user.Email),
         };
-        Console.WriteLine($"Creating token for user ID: {user.Id}");
+        Console.WriteLine ($"Creating token for user ID: {user.Id}");
         foreach (var claim in claims)
         {
-            Console.WriteLine($"{claim.Type}: {claim.Value}");
+            Console.WriteLine ($"{claim.Type}: {claim.Value}");
         }
-        var isAdmin = await userManager.IsInRoleAsync(user, "admin");
+        var isAdmin = await userManager.IsInRoleAsync (user, "admin");
 
         if (isAdmin)
         {
-            claims.Add(new Claim(ClaimTypes.Role, "admin"));
+            claims.Add (new Claim (ClaimTypes.Role, "admin"));
         }
         //That is Encrypted using a SECRET key:
 
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
+        var creds = new SigningCredentials (key, SecurityAlgorithms.HmacSha512);
 
-        var token = new JwtSecurityToken(
+        var token = new JwtSecurityToken (
             issuer: jwtSettings["Issuer"],
             audience: jwtSettings["Audience"],
-            expires: DateTime.UtcNow.AddDays(1),
+            expires: DateTime.UtcNow.AddDays (1),
             claims: claims,
             signingCredentials: creds
         );
 
         //convert the token to a string:
-        var jwt = new JwtSecurityTokenHandler().WriteToken(token); 
-       
+        var jwt = new JwtSecurityTokenHandler ().WriteToken (token);
+
 
         return jwt;
     }

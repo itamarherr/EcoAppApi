@@ -1,28 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using DAL.Data;
+﻿using DAL.Data;
 using DAL.Models;
 using EcoAppApi.DTOs;
-using DAL.enums;
-using Newtonsoft.Json;
 using EcoAppApi.Utils;
 using Microsoft.AspNetCore.Authorization;
-using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.IdentityModel.Tokens;
-using static NuGet.Packaging.PackagingConstants;
 
 
 namespace EcoAppApi.Controllers
 {
     [Authorize]
-    [Route("api/[controller]")]
+    [Route ("api/[controller]")]
     [ApiController]
     public class OrdersController : ControllerBase
     {
@@ -40,7 +29,7 @@ namespace EcoAppApi.Controllers
             _logger = logger;
             _pricingService = pricingService;
             _jwtService = jwtService;
-            _orderRepository = orderRepository; 
+            _orderRepository = orderRepository;
         }
 
         // GET: api/Orders
@@ -57,37 +46,38 @@ namespace EcoAppApi.Controllers
             try
             {
                 var validSortProperties = new[] { "CreatedAt", "TotalPrice" };
-                if (!validSortProperties.Contains(sortBy))
+                if (!validSortProperties.Contains (sortBy))
                 {
-                    return BadRequest(new { message = "Invalid sortBy parameter." });
+                    return BadRequest (new { message = "Invalid sortBy parameter." });
                 }
                 if (page <= 0 || pageSize <= 0)
-                    return BadRequest(new { message = "Page and pageSize must be greater than zero." });
-                var (orderDtos, totalItems) = await _orderService.GetOrdersAsync(userId, userEmail, sortBy, descending, page, pageSize);
+                    return BadRequest (new { message = "Page and pageSize must be greater than zero." });
+                var (orderDtos, totalItems) = await _orderService.GetOrdersAsync (userId, userEmail, sortBy, descending, page, pageSize);
 
-                return Ok(new { orders = orderDtos, totalItems });
-            } catch (Exception ex)
+                return Ok (new { orders = orderDtos, totalItems });
+            }
+            catch (Exception ex)
             {
-                _logger.LogError(ex, "Error fetching orders");
-                return StatusCode(500, new { message = "Internal server error", details = ex.Message });
+                _logger.LogError (ex, "Error fetching orders");
+                return StatusCode (500, new { message = "Internal server error", details = ex.Message });
             }
         }
 
         //GET: api/Orders/5
-        [HttpGet("{id}")]
+        [HttpGet ("{id}")]
         public async Task<ActionResult<Order>> GetOrder(int id)
         {
             if (id <= 0)
             {
-                return BadRequest(new { message = "Invalid order ID." });
+                return BadRequest (new { message = "Invalid order ID." });
             }
             var order = await _context.Orders
-                 .Include(o => o.User)
-                 .FirstOrDefaultAsync(o => o.Id == id);
-          
+                 .Include (o => o.User)
+                 .FirstOrDefaultAsync (o => o.Id == id);
+
             if (order == null)
             {
-                return NotFound();
+                return NotFound ();
             }
             var response = new
             {
@@ -95,107 +85,108 @@ namespace EcoAppApi.Controllers
                 UserEmail = order.User != null ? order.User.Email : null,
                 order.CreatedAt
             };
-            return Ok(order.ToDto());
+            return Ok (order.ToDto ());
         }
 
-        
-        [HttpGet("my-orders")]
+
+        [HttpGet ("my-orders")]
         public async Task<ActionResult<OrderDto>> GetCurrentUserOrders()
         {
             try
             {
-                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+                var userIdClaim = User.Claims.FirstOrDefault (c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
-                if (string.IsNullOrEmpty(userIdClaim))
+                if (string.IsNullOrEmpty (userIdClaim))
                 {
-                    return Unauthorized(new { error = "User is not authenticated." });
+                    return Unauthorized (new { error = "User is not authenticated." });
                 }
-                if (!Guid.TryParse(userIdClaim, out _))
+                if (!Guid.TryParse (userIdClaim, out _))
                 {
-                    return BadRequest(new { message = "Invalid user ID format." });
+                    return BadRequest (new { message = "Invalid user ID format." });
                 }
-                var order = await _orderService.GetMyOrderAsync(userIdClaim);
+                var order = await _orderService.GetMyOrderAsync (userIdClaim);
                 if (order == null)
                 {
-                    return NotFound(new { message = "No order found for the current user." });
+                    return NotFound (new { message = "No order found for the current user." });
                 }
-                return Ok(order);
+                return Ok (order);
 
-            } catch(Exception ex)
+            }
+            catch (Exception ex)
             {
-                _logger.LogError(ex, "Error fetching userws order");
-                return StatusCode(500, new { message = "Intenal server error" , details = ex.Message });    
+                _logger.LogError (ex, "Error fetching userws order");
+                return StatusCode (500, new { message = "Intenal server error", details = ex.Message });
             }
         }
 
-        
-        [HttpGet("my-orders/for-update")]
+
+        [HttpGet ("my-orders/for-update")]
         public async Task<ActionResult<OrderDto>> GetLastOrdersForUpdates()
         {
-            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            var userIdClaim = User.Claims.FirstOrDefault (c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
-            if (string.IsNullOrEmpty(userIdClaim))
+            if (string.IsNullOrEmpty (userIdClaim))
             {
-                return Unauthorized(new { error = "User is not authenticated." });
+                return Unauthorized (new { error = "User is not authenticated." });
             }
 
-            var orderDto = await _orderService.GetLastOrderForUpdateAsync(userIdClaim);
+            var orderDto = await _orderService.GetLastOrderForUpdateAsync (userIdClaim);
             if (orderDto == null)
             {
-                return NotFound(new { error = "No orders found for the current user." });
+                return NotFound (new { error = "No orders found for the current user." });
             }
 
-                       
-            return Ok(orderDto);
+
+            return Ok (orderDto);
         }
 
-        [HttpPut("my-orders/for-update")]
-      
-        public async Task<IActionResult> UpdateCurrentUserOrder( [FromBody] UpdateOrderDto updateOrderDto)
+        [HttpPut ("my-orders/for-update")]
+
+        public async Task<IActionResult> UpdateCurrentUserOrder([FromBody] UpdateOrderDto updateOrderDto)
         {
             if (!ModelState.IsValid)
             {
                 var errors = ModelState.Values
-                    .SelectMany(v => v.Errors)
-                    .Select(e => e.ErrorMessage)
-                    .ToList();
+                    .SelectMany (v => v.Errors)
+                    .Select (e => e.ErrorMessage)
+                    .ToList ();
 
-                return BadRequest(new { errors });
+                return BadRequest (new { errors });
             }
-            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            var userIdClaim = User.Claims.FirstOrDefault (c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
-            if (string.IsNullOrEmpty(userIdClaim))
+            if (string.IsNullOrEmpty (userIdClaim))
             {
-                return Unauthorized(new { error = "User is not authenticated." });
+                return Unauthorized (new { error = "User is not authenticated." });
             }
-            var success = await _orderService.UpdateCurrentUserOrderAsync(userIdClaim, updateOrderDto);
+            var success = await _orderService.UpdateCurrentUserOrderAsync (userIdClaim, updateOrderDto);
             if (!success)
             {
-                return NotFound("Order not found or you don't have access to update this order.");
+                return NotFound ("Order not found or you don't have access to update this order.");
             }
-          
-            return NoContent(); 
+
+            return NoContent ();
         }
 
         // PUT: api/Orders/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        [HttpPut ("{id}")]
 
         public async Task<IActionResult> UpdateOrder(int id, [FromBody] UpdateOrderDto updateOrderDto)
         {
-            if( id <= 0  || !ModelState.IsValid)
+            if (id <= 0 || !ModelState.IsValid)
             {
-                return BadRequest("Invalid input!");
-            }
-          
-            var success = await _orderService.UpdateOrderAsync(id, updateOrderDto);
-            if (!success)
-            {
-                return NotFound("Order not found!");
+                return BadRequest ("Invalid input!");
             }
 
-            return NoContent();
-       
+            var success = await _orderService.UpdateOrderAsync (id, updateOrderDto);
+            if (!success)
+            {
+                return NotFound ("Order not found!");
+            }
+
+            return NoContent ();
+
         }
 
         // POST: api/Orders
@@ -203,69 +194,70 @@ namespace EcoAppApi.Controllers
         [HttpPost]
         public async Task<ActionResult<OrderDto>> CreateOrder([FromBody] CreateOrderDto createDto)
         {
-           
-            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
-            if (string.IsNullOrEmpty(userIdClaim))
+            var userIdClaim = User.Claims.FirstOrDefault (c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty (userIdClaim))
             {
-         
-                userIdClaim = User.Claims.FirstOrDefault(c =>
+
+                userIdClaim = User.Claims.FirstOrDefault (c =>
                     c.Type == "sub" ||
                     c.Type == "userId" ||
                     c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
                 )?.Value;
 
-                if (string.IsNullOrEmpty(userIdClaim))
+                if (string.IsNullOrEmpty (userIdClaim))
                 {
-                    return Unauthorized(new { error = "User is not authenticated.", details = "No valid user identifier found in claims" });
+                    return Unauthorized (new { error = "User is not authenticated.", details = "No valid user identifier found in claims" });
                 }
             }
-            if (!Guid.TryParse(userIdClaim, out _))
+            if (!Guid.TryParse (userIdClaim, out _))
             {
-                return BadRequest(new { error = "Invalid User ID format." });
+                return BadRequest (new { error = "Invalid User ID format." });
             }
-     
+
             if (!ModelState.IsValid)
             {
                 var errors = ModelState.Values
-                    .SelectMany(v => v.Errors)
-                    .Select(e => e.ErrorMessage)
-                    .ToList();
+                    .SelectMany (v => v.Errors)
+                    .Select (e => e.ErrorMessage)
+                    .ToList ();
 
-                return BadRequest(new  { errors });
+                return BadRequest (new { errors });
             }
 
             try
             {
-                var orderDto = await _orderService.CreateOrderAsync(createDto, userIdClaim);
-                return CreatedAtAction(nameof(GetOrder), new { id = orderDto.Id }, orderDto);
-            } catch (Exception ex)
+                var orderDto = await _orderService.CreateOrderAsync (createDto, userIdClaim);
+                return CreatedAtAction (nameof (GetOrder), new { id = orderDto.Id }, orderDto);
+            }
+            catch (Exception ex)
             {
-                _logger.LogError(ex, "Eror creatingorder");
-                return StatusCode(500, new { message = "Internal server error", details=ex.Message});
-            } 
+                _logger.LogError (ex, "Eror creatingorder");
+                return StatusCode (500, new { message = "Internal server error", details = ex.Message });
+            }
         }
 
         // DELETE: api/Orders/5
-        [HttpDelete("my-orders/latest")]
+        [HttpDelete ("my-orders/latest")]
         public async Task<IActionResult> DeleteMyOrder()
         {
-            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(userIdClaim))
+            var userIdClaim = User.Claims.FirstOrDefault (c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty (userIdClaim))
             {
-                return Unauthorized("You are not authorized.");
+                return Unauthorized ("You are not authorized.");
             }
-            var success = await _orderService.DeleteLastOrderAsync(userIdClaim);
+            var success = await _orderService.DeleteLastOrderAsync (userIdClaim);
 
             if (!success)
             {
-                return NotFound("Order not found or you don't have access to delete this order.");
+                return NotFound ("Order not found or you don't have access to delete this order.");
             }
 
-            return NoContent();
-       
+            return NoContent ();
+
         }
 
-   
+
     }
 }

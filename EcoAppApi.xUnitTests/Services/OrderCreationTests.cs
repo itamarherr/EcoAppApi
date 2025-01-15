@@ -1,12 +1,6 @@
-﻿using DAL.enums;
-using DAL.Data;
-using DAL.Models;
+﻿using DAL.Data;
+using DAL.enums;
 using EcoAppApi.DTOs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using EcoAppApi.Utils;
 
 namespace EcoAppApi.xUnitTests.Services
@@ -18,9 +12,9 @@ namespace EcoAppApi.xUnitTests.Services
         private readonly IOrderService _orderService;
         public OrderCreationTests()
         {
-            _context = GetInMemoryDbContext();
-            var orderRepository = new OrderRepository(_context);
-            _orderService = new OrderService(orderRepository, new PricingService(), _context);
+            _context = GetInMemoryDbContext ();
+            var orderRepository = new OrderRepository (_context);
+            _orderService = new OrderService (orderRepository, new PricingService (), _context);
         }
         /// <summary>
         /// Tests the creation of a new order.
@@ -30,7 +24,7 @@ namespace EcoAppApi.xUnitTests.Services
         public async Task CreateOrder_ShouldAddOrderToDatabase()
         {
             // Arrange: Seed the database with test data and define a new order to create.
-            await SeedTestDataAsync(_context);
+            await SeedTestDataAsync (_context);
 
 
             var createOrderDto = new CreateOrderDto
@@ -49,14 +43,14 @@ namespace EcoAppApi.xUnitTests.Services
             };
 
             // Act: Call the CreateOrderAsync method.
-            var result = await _orderService.CreateOrderAsync(createOrderDto, "user1");
+            var result = await _orderService.CreateOrderAsync (createOrderDto, "user1");
 
             // Assert: Verify the order was created and properties match expectations.
-            Assert.NotNull(result); // Ensure the result is not null.
-            Assert.Equal("user1", result.UserId); // Verify the user ID matches.
-            Assert.Equal(1200, result.TotalPrice); // Verify the total price is calculated correctly.
-            Assert.Equal(5, result.NumberOfTrees); // Verify the number of trees matches.
-            Assert.Equal("City", result.City); // Verify the city matches the input.
+            Assert.NotNull (result); // Ensure the result is not null.
+            Assert.Equal ("user1", result.UserId); // Verify the user ID matches.
+            Assert.Equal (1200, result.TotalPrice); // Verify the total price is calculated correctly.
+            Assert.Equal (5, result.NumberOfTrees); // Verify the number of trees matches.
+            Assert.Equal ("City", result.City); // Verify the city matches the input.
         }
 
         /// <summary>
@@ -81,9 +75,9 @@ namespace EcoAppApi.xUnitTests.Services
             };
 
             // Act & Assert: Verify an exception is thrown.
-            await Assert.ThrowsAsync<ArgumentException>(async () =>
+            await Assert.ThrowsAsync<ArgumentException> (async () =>
             {
-                await _orderService.CreateOrderAsync(createOrderDTo, "invalidUser");
+                await _orderService.CreateOrderAsync (createOrderDTo, "invalidUser");
             });
         }
     }

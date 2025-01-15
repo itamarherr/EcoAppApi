@@ -6,12 +6,12 @@ namespace EcoAppApi.DTOs
     {
         [Required]
         [EmailAddress]
-        [MinLength(2), MaxLength(20)]
+        [MinLength (2), MaxLength (20)]
         public required string Email { get; set; }
-      
+
         [Required]
-        [DataType(DataType.Password)]
-        [MinLength(2), MaxLength(20)]
+        [DataType (DataType.Password)]
+        [MinLength (2), MaxLength (20)]
         public required string Password { get; set; }
     }
 }
