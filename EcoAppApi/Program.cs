@@ -23,6 +23,8 @@ namespace EcoAppApi
         {
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddControllers();
+
+
             // Add services to the container.
             builder.Services.AddDbContext<DALContext>(options =>
               options.UseSqlServer(builder.Configuration.GetConnectionString("DALContext") ?? throw new InvalidOperationException("Connection string 'DALContext' not found.")));
@@ -110,7 +112,7 @@ namespace EcoAppApi
                              Type = ReferenceType.SecurityScheme,
                               Id = "Bearer"
                              },
-                             Scheme = "Bearer", // Include Scheme here as well for clarity
+                             Scheme = "Bearer",
                              Name = "Bearer",
                              In = ParameterLocation.Header
                             },

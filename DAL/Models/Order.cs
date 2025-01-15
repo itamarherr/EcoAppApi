@@ -9,6 +9,7 @@ namespace DAL.Models;
 public class Order
 {
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
     [Required(ErrorMessage = "UserId is required.")]
     public string UserId { get; set; }
