@@ -4,6 +4,7 @@ using DAL.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(DALContext))]
-    partial class DALContextModelSnapshot : ModelSnapshot
+    [Migration("20250117001045_AddPropertyToAppUser")]
+    partial class AddPropertyToAppUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -100,7 +103,7 @@ namespace DAL.Migrations
                         {
                             Id = "1",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "2b4f3496-7812-4386-89c3-19692115030d",
+                            ConcurrencyStamp = "aa6ed581-71fe-431e-9652-5cd270892b12",
                             Email = "itamarherr@gmail.com",
                             EmailConfirmed = false,
                             FirstName = "Itamar",
@@ -109,10 +112,10 @@ namespace DAL.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ITAMARHERR@GMAIL.COM",
                             NormalizedUserName = "ITAMAR",
-                            PasswordHash = "AQAAAAIAAYagAAAAEMe7OGAs/4Kqd4hIAfjULLyGnTmY5xm0eAhsrBr9buFnSmv0OwJKV0UR5U6BBuGkhQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEA/re3cDidug0ezhdaIsDWNFueFkfsbfulUPXEnaksjr0ZKrzyEra7nQ8nzT7cPvlw==",
                             PhoneNumber = "1234567890",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "2660f796-ffb0-458d-8713-3e0d4e8634c2",
+                            SecurityStamp = "20c22678-8c38-4544-8ea1-b4c229542e50",
                             TwoFactorEnabled = false,
                             UserName = "Itamar"
                         });
@@ -188,8 +191,8 @@ namespace DAL.Migrations
                             Id = 1,
                             City = "SampleCity",
                             ConsultancyType = 0,
-                            CreatedAt = new DateTime(2025, 1, 17, 20, 46, 9, 721, DateTimeKind.Utc).AddTicks(7810),
-                            DateForConsultancy = new DateTime(2025, 1, 17, 22, 46, 9, 721, DateTimeKind.Local).AddTicks(7802),
+                            CreatedAt = new DateTime(2025, 1, 17, 0, 10, 45, 261, DateTimeKind.Utc).AddTicks(1550),
+                            DateForConsultancy = new DateTime(2025, 1, 17, 2, 10, 45, 261, DateTimeKind.Local).AddTicks(1547),
                             IsPrivateArea = false,
                             Number = 123,
                             NumberOfTrees = 0,
@@ -204,8 +207,8 @@ namespace DAL.Migrations
                             Id = 2,
                             City = "AnotherCity",
                             ConsultancyType = 0,
-                            CreatedAt = new DateTime(2025, 1, 17, 20, 46, 9, 721, DateTimeKind.Utc).AddTicks(7815),
-                            DateForConsultancy = new DateTime(2025, 1, 17, 22, 46, 9, 721, DateTimeKind.Local).AddTicks(7814),
+                            CreatedAt = new DateTime(2025, 1, 17, 0, 10, 45, 261, DateTimeKind.Utc).AddTicks(1555),
+                            DateForConsultancy = new DateTime(2025, 1, 17, 2, 10, 45, 261, DateTimeKind.Local).AddTicks(1553),
                             IsPrivateArea = false,
                             Number = 456,
                             NumberOfTrees = 0,
@@ -283,7 +286,7 @@ namespace DAL.Migrations
                         new
                         {
                             Id = "1",
-                            ConcurrencyStamp = "b142489c-4b09-4656-b5db-8c9f3bed91c0",
+                            ConcurrencyStamp = "f1c90189-47e8-482f-85db-a9d353d9a269",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         });

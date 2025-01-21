@@ -9,6 +9,7 @@ public interface IOrderRepository
     Task<Order?> GetLatestOrderAsync(string userId);
     Task<Order> CreateOrderAsync(Order order);
     Task<Order> GetOrderByIdAsync(int id);
-    Task DeleteOrderAsync(Order order);
+    Task DeleteMyOrderAsync(Order order);
+    Task DeleteOrderByIdAsync(int orderId);
 
 }

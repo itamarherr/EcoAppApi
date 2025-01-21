@@ -74,10 +74,21 @@ namespace DAL.Data
           .FirstOrDefaultAsync (o => o.Id == id);
         }
 
-        public async Task DeleteOrderAsync(Order order)
+        public async Task DeleteOrderByIdAsync(int orderId)
         {
+            var order = await _context.Orders.FindAsync (orderId);
+            if (order == null)
+            {
+                throw new InvalidOperationException ("Order not found.");
+            }
             _context.Orders.Remove (order);
             await _context.SaveChangesAsync ();
+        }
+
+        public async Task DeleteMyOrderAsync(Order order)
+        {
+            _context.Orders.Remove (order);
+            await _context.SaveChangesAsync (); ;
         }
     }
 }

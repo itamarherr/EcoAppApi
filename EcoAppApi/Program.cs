@@ -3,7 +3,9 @@ using DAL.Data;
 using DAL.Models;
 using EcoAppApi.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -30,6 +32,19 @@ namespace EcoAppApi
                 options.Password.RequiredLength = 8;
 
             }).AddEntityFrameworkStores<DALContext> ();
+            builder.Services.Configure<FormOptions> (options =>
+            {
+                options.MultipartBodyLengthLimit = 10 * 1024 * 1024; // Allow large file uploads (10MB)
+            });
+            builder.Services.Configure<IISServerOptions> (options =>
+            {
+                options.MaxRequestBodySize = 50 * 1024 * 1024; // 50MB for IIS
+            });
+
+            builder.Services.Configure<KestrelServerOptions> (options =>
+            {
+                options.Limits.MaxRequestBodySize = 50 * 1024 * 1024; // 50MB for Kestrel
+            });
             builder.Services.AddControllers ()
             .AddJsonOptions (options =>
             {
@@ -130,6 +145,7 @@ namespace EcoAppApi
                         "http://localhost:5174"
                     ).AllowAnyHeader ()
                     .AllowAnyMethod ()
+                    .WithExposedHeaders ("Content-Disposition")
                     .AllowCredentials ();
                 });
             });
@@ -184,6 +200,7 @@ namespace EcoAppApi
             app.UseAuthentication ();
 
             app.UseAuthorization ();
+            app.UseStaticFiles ();
 
             if (app.Environment.IsDevelopment ())
             {

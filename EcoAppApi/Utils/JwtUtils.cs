@@ -23,12 +23,22 @@ public class JwtUtils(IConfiguration configuration, UserManager<AppUser> userMan
         var claims = new List<Claim> ()
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id),
+            new Claim(ClaimTypes.Email, user.Email), // Include email for debugging
         };
         Console.WriteLine ($"Creating token for user ID: {user.Id}");
         foreach (var claim in claims)
         {
             Console.WriteLine ($"{claim.Type}: {claim.Value}");
         }
+        var roles = await userManager.GetRolesAsync (user);
+        Console.WriteLine ($"User roles: {string.Join (", ", roles)}");
+
+        foreach (var role in roles)
+        {
+            claims.Add (new Claim (ClaimTypes.Role, role));
+        }
+
+
         var isAdmin = await userManager.IsInRoleAsync (user, "admin");
 
         if (isAdmin)

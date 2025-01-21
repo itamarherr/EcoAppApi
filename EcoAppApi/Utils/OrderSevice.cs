@@ -103,6 +103,11 @@ public class OrderService : IOrderService
         var lastOrder = await _orderRepository.GetLatestOrderAsync (userId);
         return lastOrder?.ToDto ();
     }
+    public async Task<OrderDto?> GetOrderForUpdateAsync(string userId)
+    {
+        var lastOrder = await _orderRepository.GetLatestOrderAsync (userId);
+        return lastOrder?.ToDto ();
+    }
 
     public async Task<bool> UpdateOrderAsync(int id, UpdateOrderDto updateOrderDto)
     {
@@ -139,6 +144,36 @@ public class OrderService : IOrderService
         ApplyUpdates (order, updateOrderDto);
 
         await _context.SaveChangesAsync ();
+        return true;
+    }
+
+
+    public async Task<bool> DeleteLastOrderAsync(string userId)
+    {
+        if (string.IsNullOrEmpty (userId))
+        {
+            throw new ArgumentException ("UserId is required.");
+        }
+        var order = await _orderRepository.GetLatestOrderAsync (userId);
+
+        if (order == null)
+        {
+            throw new ArgumentException ("No orders found for the given user.");
+        }
+
+        await _orderRepository.DeleteMyOrderAsync (order);
+        return true;
+    }
+    public async Task<bool> DeleteOrderByIdAsync(int orderId)
+    {
+        if (orderId <= 0)
+        {
+            throw new ArgumentException ("UserId is required.");
+        }
+        //var order = await _orderRepository.GetOrderByIdAsync(orderId);
+
+
+        await _orderRepository.DeleteOrderByIdAsync (orderId);
         return true;
     }
     private void ApplyUpdates(Order order, UpdateOrderDto updateOrderDto)
@@ -180,23 +215,6 @@ public class OrderService : IOrderService
 
         if (updateOrderDto.StatusType.HasValue)
             order.StatusType = updateOrderDto.StatusType.Value;
-    }
-
-    public async Task<bool> DeleteLastOrderAsync(string userId)
-    {
-        if (string.IsNullOrEmpty (userId))
-        {
-            throw new ArgumentException ("UserId is required.");
-        }
-        var order = await _orderRepository.GetLatestOrderAsync (userId);
-
-        if (order == null)
-        {
-            throw new ArgumentException ("No orders found for the given user.");
-        }
-
-        await _orderRepository.DeleteOrderAsync (order);
-        return true;
     }
 }
 

@@ -90,8 +90,12 @@ public class DALContext(DbContextOptions<DALContext> options) :
                   NormalizedEmail = "ITAMARHERR@GMAIL.COM",
                   UserName = "Itamar",
                   NormalizedUserName = "ITAMAR",
+                  FirstName = "Itamar",
+                  LastName = "Herr",
+                  PhoneNumber = "1234567890",
+                  ImageUrl  = "https://i.pravatar.cc/66",
                   SecurityStamp = Guid.NewGuid().ToString(),
-                  PasswordHash = hasher.HashPassword(null, "12345")
+                  PasswordHash = hasher.HashPassword(null, "ItamarherrPassword1!")
               }
           });
         modelBuilder.Entity<IdentityUserRole<string>> ().HasData (new[]

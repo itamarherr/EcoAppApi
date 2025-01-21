@@ -58,5 +58,47 @@ public class OrderDeletionTests : TestBase
             await _orderService.DeleteLastOrderAsync ("nonexistentUser");
         });
     }
+    /// <summary>
+    /// Verifies that the admin can delete order successfully by its ID.
+    /// Ensures the order no longer exists in the database after deletion.
+    /// </summary>
+    [Fact]
+    public async Task DeleteOrderById_ShouldRemoveOrderFromDatabase()
+    {
+        await SeedTestDataAsync (_context);
+
+        // Arrange: Ensure there is an existing order with a known ID.
+        var existingOrder = await _orderRepository.GetOrderByIdAsync (1); // Assuming ID = 1 exists in SeedTestData
+        Assert.NotNull (existingOrder); // The order must exist before we can delete it.
+
+        // Act: Delete the order by its ID.
+        var result = await _orderService.DeleteOrderByIdAsync (existingOrder.Id);
+
+        // Assert: Ensure the deletion was successful.
+        Assert.True (result);
+
+        // Additional Assert: Ensure the order no longer exists in the database.
+        var deletedOrder = await _orderRepository.GetOrderByIdAsync (existingOrder.Id);
+        Assert.Null (deletedOrder); // The order should be null as it was deleted.
+    }
+    /// <summary>
+    /// Ensures that attempting to delete an order with an invalid or non-existent ID
+    /// throws an ArgumentException.
+    /// </summary>
+    [Fact]
+    public async Task DeleteOrderById_ShouldThrowIfOrderDoesNotExist()
+    {
+        // Arrange: Ensure the database is empty or ID is non-existent.
+        var nonExistentId = 9999; // An ID that does not exist
+        var orders = await _context.Orders.ToListAsync ();
+        Assert.DoesNotContain (orders, o => o.Id == nonExistentId);
+
+        // Act & Assert: Attempt to delete an order by a non-existent ID and expect an exception.
+        await Assert.ThrowsAsync<InvalidOperationException> (async () =>
+        {
+            await _orderService.DeleteOrderByIdAsync (nonExistentId);
+        });
+    }
+
 
 }

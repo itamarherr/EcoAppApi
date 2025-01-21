@@ -14,6 +14,10 @@ public class RegisterDto
     [Required]
     [DataType (DataType.Password)]
     public required string Password { get; set; }
+    public string? FirstName { get; set; }
+    public string? LastName { get; set; }
+    public string? PhoneNumber { get; set; }
+    //public string? ImageUrl { get; set; }
 }
 public static class RegisterDtoExtentions
 {
@@ -25,7 +29,11 @@ public static class RegisterDtoExtentions
             Email = dto.Email,
             UserName = dto.Username,
             NormalizedEmail = dto.Email.ToUpper (),
-            NormalizedUserName = dto.Username.ToUpper ()
+            NormalizedUserName = dto.Username.ToUpper (),
+            FirstName = dto.FirstName,
+            LastName = dto.LastName,
+            PhoneNumber = dto.PhoneNumber,
+            //ImageUrl = dto.ImageUrl = $"/Uploads/{uniqueFileName}"
         };
     }
 }
