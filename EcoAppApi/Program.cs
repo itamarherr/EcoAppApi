@@ -149,6 +149,7 @@ namespace EcoAppApi
                     .AllowCredentials ();
                 });
             });
+
             var app = builder.Build ();
             var logger = app.Logger;
 

@@ -209,6 +209,7 @@ public class AuthController(
 
     //Optional: Get for fatching user profiles (use cautiously)
     //GET: Api/Auth/USer/{id}
+    [Authorize (Roles = "Admin")]
     [HttpGet ("User/{id}")]
     public async Task<IActionResult> GetUser(Guid id)
     {

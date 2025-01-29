@@ -174,7 +174,7 @@ public class OrdersController : ControllerBase
 
     // PUT: api/Orders/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-    //[Authorize (Roles = "admin")]
+    [Authorize (Roles = "admin")]
     [HttpPut ("{id}")]
     public async Task<IActionResult> UpdateOrder(int id, [FromBody] UpdateOrderDto updateOrderDto)
     {
@@ -262,7 +262,7 @@ public class OrdersController : ControllerBase
 
     }
     // DELETE:Api/Orders/Delete/{id}
-    //[Authorize (Roles = "admin")]
+    [Authorize (Roles = "admin")]
     [HttpDelete ("Delete/{id}")]
     public async Task<IActionResult> DeleteOrder(int id)
     {
