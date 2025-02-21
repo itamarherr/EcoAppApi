@@ -5,6 +5,8 @@ namespace EcoAppApi.Utils
     public interface IOrderService
     {
 
+        Task<IEnumerable<SearchOrderDto>> SearchOrderAsync(string query);
+
         Task<(List<OrderDto>, int)> GetOrdersAsync(
             string? userId, string? userEmail, string sortBy, bool descending, int page, int pageSize
             );

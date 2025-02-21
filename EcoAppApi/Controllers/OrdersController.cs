@@ -32,6 +32,33 @@ public class OrdersController : ControllerBase
         _orderRepository = orderRepository;
     }
 
+    [Authorize (Roles = "admin")]
+    [HttpGet ("search")]
+    public async Task<ActionResult<IEnumerable<OrderDto>>> SearchOrders([FromQuery] string query)
+    {
+        if (string.IsNullOrWhiteSpace (query))
+        {
+            return BadRequest (new { message = "This Queiry is empty!" });
+        }
+        try
+        {
+            var orders = await _orderService.SearchOrderAsync (query);
+            if (orders == null || !orders.Any ())
+            {
+                return NotFound (new { message = "No mathing orders found!" });
+            }
+            return Ok (orders);
+        }
+        catch (Exception ex)
+        {
+
+            _logger.LogError (ex, "Error searching orders");
+            return StatusCode (500, new { message = "Internet server error", details = ex.Message });
+
+        }
+
+    }
+
     // GET: api/Orders
     [Authorize (Roles = "admin")]
     [HttpGet]
@@ -142,6 +169,8 @@ public class OrdersController : ControllerBase
 
         return Ok (orderDto);
     }
+
+
 
     // PUT: api/Orders/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

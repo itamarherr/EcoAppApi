@@ -1,4 +1,5 @@
-﻿using DAL.Models;
+﻿using DAL.enums;
+using DAL.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Data
@@ -10,6 +11,20 @@ namespace DAL.Data
         public OrderRepository(DALContext context)
         {
             _context = context ?? throw new ArgumentNullException (nameof (context));
+        }
+
+        public async Task<IEnumerable<Order>> SearchOrdersAsync(string query)
+        {
+            return await _context.Orders
+                .Include (o => o.User)
+                .Where (o =>
+                o.Id.ToString ().Contains (query) ||
+                o.User.Email.Contains (query) ||
+                o.City.Contains (query) ||
+                Enum.GetName (typeof (Purpose), o.ConsultancyType)!.Contains (query)
+                )
+                .ToListAsync ();
+
         }
 
         public async Task<List<Order>> GetPaginatedOrdersAsync(string? userId, string? userEmail, string sortBy, bool descending, int page, int pageSize)

@@ -96,8 +96,17 @@ public class AuthController(
 
             if (result.Succeeded)
             {
+                var roles = await userManager.GetRolesAsync (user);
+                var role = roles.FirstOrDefault () ?? "user";
+
+                Console.WriteLine ($"User {user.Email} has roles: {string.Join (", ", roles)}");
+
                 var token = await jwtService.CreateToken (user);
-                return Ok (new { token });
+                return Ok (new
+                {
+                    token,
+                    role
+                });
             }
             return Unauthorized ();
         }

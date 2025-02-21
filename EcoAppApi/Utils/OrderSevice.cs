@@ -1,4 +1,5 @@
 ﻿using DAL.Data;
+using DAL.enums;
 using DAL.Models;
 using EcoAppApi.DTOs;
 
@@ -17,6 +18,23 @@ public class OrderService : IOrderService
         _pricingService = pricingService ?? throw new ArgumentNullException (nameof (pricingService));
         _context = context ?? throw new ArgumentNullException (nameof (context));
     }
+
+    public async Task<IEnumerable<SearchOrderDto>> SearchOrderAsync(string query)
+    {
+        var orders = await _orderRepository.SearchOrdersAsync (query);
+        return orders.Select (o => new SearchOrderDto
+        {
+            Id = o.Id,
+            UserEmail = o.User.Email,
+            UserName = o.User.UserName,
+            ServiceType = o.Product.Name,
+            City = o.City,
+            StatusTypeString = Enum.GetName (typeof (OrderStatus), o.StatusType) ?? "Unknown",
+            ConsultancyTypeString = Enum.GetName (typeof (Purpose), o.ConsultancyType) ?? "Unknown"
+        }).ToList ();
+
+    }
+
     public async Task<(List<OrderDto>, int)> GetOrdersAsync(string? userId, string? userEmail, string sortBy, bool descending, int page, int pageSize)
     {
         if (page <= 0 || pageSize <= 0)
