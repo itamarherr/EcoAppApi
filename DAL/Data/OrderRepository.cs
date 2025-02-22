@@ -15,16 +15,24 @@ namespace DAL.Data
 
         public async Task<IEnumerable<Order>> SearchOrdersAsync(string query)
         {
-            return await _context.Orders
-                .Include (o => o.User)
-                .Where (o =>
-                o.Id.ToString ().Contains (query) ||
-                o.User.Email.Contains (query) ||
-                o.City.Contains (query) ||
-                Enum.GetName (typeof (Purpose), o.ConsultancyType)!.Contains (query)
-                )
-                .ToListAsync ();
+            query = query.Trim ().ToLower ();
+            var allOrders = await _context.Orders
+         .Include (o => o.User)
+         .ToListAsync (); // ✅ Ensure we are getting the full list
 
+            Console.WriteLine ($"Total Orders in DB: {allOrders.Count}");
+
+            // ✅ Now apply filtering in-memory (LINQ-to-Objects)
+            var filteredOrders = allOrders.Where (o =>
+                o.Id.ToString ().Contains (query) ||  // ✅ ID Matching
+                (o.User?.Email?.ToLower ().Contains (query) ?? false) ||  // ✅ Prevent null exceptions
+                o.City.ToLower ().Contains (query) ||  // ✅ City Matching
+                (Enum.GetName (typeof (Purpose), o.ConsultancyType)?.ToLower () ?? "").Contains (query) // ✅ Enum Matching (Now Safe!)
+            ).ToList ();
+
+            Console.WriteLine ($"Search Results Count: {filteredOrders.Count}");
+
+            return filteredOrders;
         }
 
         public async Task<List<Order>> GetPaginatedOrdersAsync(string? userId, string? userEmail, string sortBy, bool descending, int page, int pageSize)
