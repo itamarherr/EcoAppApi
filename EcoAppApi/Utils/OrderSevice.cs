@@ -27,7 +27,7 @@ public class OrderService : IOrderService
             Id = o.Id,
             UserEmail = o.User.Email,
             UserName = o.User.UserName,
-            ServiceType = o.Product.Name,
+            ServiceType = o.Product != null ? o.Product.Name : "Unknown",
             City = o.City,
             StatusTypeString = Enum.GetName (typeof (OrderStatus), o.StatusType) ?? "Unknown",
             ConsultancyTypeString = Enum.GetName (typeof (Purpose), o.ConsultancyType) ?? "Unknown"

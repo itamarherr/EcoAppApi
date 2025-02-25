@@ -18,15 +18,15 @@ namespace DAL.Data
             query = query.Trim ().ToLower ();
             var allOrders = await _context.Orders
          .Include (o => o.User)
-         .ToListAsync (); // ✅ Ensure we are getting the full list
+         .ToListAsync (); //  Ensure we are getting the full list
 
             Console.WriteLine ($"Total Orders in DB: {allOrders.Count}");
 
-            // ✅ Now apply filtering in-memory (LINQ-to-Objects)
+            //  Now apply filtering in-memory (LINQ-to-Objects)
             var filteredOrders = allOrders.Where (o =>
-                o.Id.ToString ().Contains (query) ||  // ✅ ID Matching
+                o.Id.ToString ().Contains (query) ||  //  ID Matching
                 (o.User?.Email?.ToLower ().Contains (query) ?? false) ||  // ✅ Prevent null exceptions
-                o.City.ToLower ().Contains (query) ||  // ✅ City Matching
+                o.City.ToLower ().Contains (query) ||  //  City Matching
                 (Enum.GetName (typeof (Purpose), o.ConsultancyType)?.ToLower () ?? "").Contains (query) // ✅ Enum Matching (Now Safe!)
             ).ToList ();
 
