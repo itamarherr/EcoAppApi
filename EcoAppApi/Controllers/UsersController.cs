@@ -19,9 +19,25 @@ namespace EcoAppApi.Controllers
         ) : ControllerBase
     {
 
+
+        [HttpGet ("search")]
+        public async Task<IActionResult> SearchUsers([FromQuery] string query)
+        {
+            if (string.IsNullOrEmpty (query))
+            {
+                return BadRequest ("Query Can't be empty");
+            }
+            var users = await _userManager.Users
+                .Where (u => u.UserName != null && u.UserName.Contains (query) ||
+                u.Email != null && u.Email.Contains (query) ||
+                u.FirstName != null && u.FirstName.Contains (query) ||
+                u.LastName != null && u.LastName.Contains (query))
+                .ToListAsync ();
+            var userDtos = users.Select (user => user.ToDto ()).ToList ();
+            return Ok (userDtos);
+        }
         // GET: api/Users
         [HttpGet]
-
         public async Task<IActionResult> GetAllUsers()
         {
             var users = await _userManager.Users.ToListAsync ();

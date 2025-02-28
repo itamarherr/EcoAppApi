@@ -244,6 +244,8 @@ public class AuthController(
         return Ok (userDto);
     }
     /*  [Authorize] */ // Ensures the user is authenticated
+
+
     [HttpGet ("my-profile")]
     public async Task<IActionResult> GetCurrentUserProfile()
     {
@@ -260,17 +262,17 @@ public class AuthController(
             return NotFound (new { error = "User not found" });
         }
 
-        var userDto = new
-        {
-            user.Id,
-            user.Email,
-            user.UserName,
-            user.FirstName,
-            user.LastName,
-            user.PhoneNumber,
-            ImageUrl = string.IsNullOrEmpty (user.ImageUrl) ? "/Uploads/default-profile.png" : user.ImageUrl
-        };
+        //var userDto = new
+        //{
+        //    user.Id,
+        //    user.Email,
+        //    user.UserName,
+        //    user.FirstName,
+        //    user.LastName,
+        //    user.PhoneNumber,
+        //    ImageUrl = string.IsNullOrEmpty (user.ImageUrl) ? "/Uploads/default-profile.png" : user.ImageUrl
+        //};
 
-        return Ok (userDto);
+        return Ok (user.ToDto ());
     }
 }
