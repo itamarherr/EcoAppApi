@@ -218,7 +218,7 @@ public class OrdersController : ControllerBase
             return NotFound ("Order not found!");
         }
 
-        return NoContent ();
+        return Ok (success);
 
     }
 
