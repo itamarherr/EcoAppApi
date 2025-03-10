@@ -152,12 +152,16 @@ public class OrderService : IOrderService
         {
             throw new ArgumentException ("UserId is required.");
         }
-
-        var order = await _orderRepository.GetOrderByIdAsync (updateOrderDto.Id);
-        if (order == null || order.UserId != userId)
+        var order = await _orderRepository.GetLatestOrderAsync (userId);
+        if (order == null)
         {
             throw new ArgumentException ("Order not found or user does not have permission.");
         }
+        //var order = await _orderRepository.GetOrderByIdAsync (updateOrderDto.Id);
+        //if (order == null || order.UserId != userId)
+        //{
+        //    throw new ArgumentException ("Order not found or user does not have permission.");
+        //}
 
         ApplyUpdates (order, updateOrderDto);
 
