@@ -145,20 +145,11 @@ public class AuthController(
 
         Console.WriteLine ($"User data before update: Email - {user.Email}, Username - {user.UserName}");
 
-        if (dto.Email is not null)
-            user.Email = dto.Email;
-
-        if (dto.UserName is not null)
-            user.UserName = dto.UserName;
-
-        if (dto.PhoneNumber is not null)
-            user.PhoneNumber = dto.PhoneNumber;
-
-        if (dto.FirstName is not null)
-            user.FirstName = dto.FirstName;
-
-        if (dto.LastName is not null)
-            user.LastName = dto.LastName;
+        user.Email = dto.Email ?? user.Email;
+        user.PhoneNumber = dto.PhoneNumber ?? user.PhoneNumber;
+        user.FirstName = dto.FirstName ?? user.FirstName;
+        user.UserName = dto.UserName ?? user.UserName;
+        user.LastName = dto.LastName ?? user.LastName;
 
         if (image != null)
         {
