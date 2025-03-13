@@ -142,7 +142,7 @@ public class AuthController(
         }
         var user = await userManager.FindByIdAsync (userIdClaim);
         if (user is null) return NotFound ("User not found");
-        Console.WriteLine ("user not found");
+
         Console.WriteLine ($"User data before update: Email - {user.Email}, Username - {user.UserName}");
 
         if (dto.Email is not null)
@@ -193,7 +193,7 @@ public class AuthController(
 
             user.ImageUrl = $"/Uploads/{uniqueFileName}";
         }
-        Console.WriteLine ("No image received");
+
         var result = await userManager.UpdateAsync (user);
         if (result.Succeeded)
             return Ok (new { message = "User updated successfully." });
