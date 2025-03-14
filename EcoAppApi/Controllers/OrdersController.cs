@@ -64,7 +64,7 @@ public class OrdersController : ControllerBase
     [HttpGet]
     public async Task<ActionResult> GetOrders(
          [FromQuery] int page = 1,
-         [FromQuery] int pageSize = 20,
+         [FromQuery] int pageSize = 10,
          [FromQuery] string sortBy = "CreatedAt",
          [FromQuery] bool descending = true,
          [FromQuery] string? userId = null,
