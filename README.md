@@ -55,33 +55,38 @@ Running Tests
 
 dotnet test
 ```
-Test Organization
-Services - Validates service layer logic.
-Repositories - Tests database interactions.
-Utilities - Ensures correct pricing and data transformations.
-Example Tests
 
-CreateOrder_ShouldAddOrderToDatabase
-DeleteOrder_ShouldThrowExceptionWhenOrderNotFound
- API Endpoints
+##  Running Unit Tests
 
+This project includes **xUnit tests** using an **InMemory Database** to ensure repeatable and isolated test results.
+
+###  How to Run Tests
+```bash
+dotnet test
+```
+
+🗂 Test Organization
+Category	Purpose
+Services	Tests the business logic in the service layer.
+Repositories	Ensures database interactions are correct.
+Utilities	Verifies helper functions like pricing calculations.
+📌 Example Test Cases
+✅ CreateOrder_ShouldAddOrderToDatabase
+✅ DeleteOrder_ShouldThrowExceptionWhenOrderNotFound
+✅ DeleteOrderById_ShouldRemoveOrderFromDatabase
+✅ DeleteOrderById_ShouldThrowIfOrderDoesNotExist
+📬 API Endpoints
 Method	Endpoint	Description	Auth
-POST	/api/auth/register	Register a new user	
-POST	/api/auth/login	Login and get JWT token	
-GET	/api/orders	Get all orders	 Admin
-DELETE	/api/orders/{id}	Delete order by ID	 Admin
-POST	/api/posts	Create a new post	 User
- Current Development Focus
- In Progress:
+POST	/api/auth/register	Register a new user	❌
+POST	/api/auth/login	Login and get JWT token	❌
+GET	/api/orders	Get all orders	✅ Admin
+DELETE	/api/orders/{id}	Delete order by ID	✅ Admin
+POST	/api/posts	Create a new post	✅ User
 
-Expanding role-based access control.
-Improving validation & business logic.
-Completing Product CRUD functionality.
-Enhancing API documentation with Swagger.
 ## License
 This project is open-source under the MIT License.
 
 ## Contributors
-Itamar Herr 👨‍💻
+### Itamar Herr 
 For any questions or contributions, feel free to open an issue or contact the repository maintainer.
 
