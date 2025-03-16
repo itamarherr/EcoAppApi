@@ -65,23 +65,25 @@ This project includes **xUnit tests** using an **InMemory Database** to ensure r
 dotnet test
 ```
 
-🗂 Test Organization
+### Test Organization
 Category	Purpose
 Services	Tests the business logic in the service layer.
 Repositories	Ensures database interactions are correct.
 Utilities	Verifies helper functions like pricing calculations.
-📌 Example Test Cases
-✅ CreateOrder_ShouldAddOrderToDatabase
-✅ DeleteOrder_ShouldThrowExceptionWhenOrderNotFound
-✅ DeleteOrderById_ShouldRemoveOrderFromDatabase
-✅ DeleteOrderById_ShouldThrowIfOrderDoesNotExist
-📬 API Endpoints
-Method	Endpoint	Description	Auth
-POST	/api/auth/register	Register a new user	❌
-POST	/api/auth/login	Login and get JWT token	❌
-GET	/api/orders	Get all orders	✅ Admin
-DELETE	/api/orders/{id}	Delete order by ID	✅ Admin
-POST	/api/posts	Create a new post	✅ User
+
+### Example Test Cases
+ - CreateOrder_ShouldAddOrderToDatabase
+ - DeleteOrder_ShouldThrowExceptionWhenOrderNotFound
+ - DeleteOrderById_ShouldRemoveOrderFromDatabase
+ - DeleteOrderById_ShouldThrowIfOrderDoesNotExist
+	- 
+### API Endpoints
+- Method	Endpoint	Description	Auth
+- POST	/api/auth/register	Register a new user	
+- POST	/api/auth/login	Login and get JWT token	
+- GET	/api/orders	Get all orders	 Admin
+- DELETE	/api/orders/{id}	Delete order by I
+- POST	/api/posts	Create a new post	 User
 
 ## License
 This project is open-source under the MIT License.
