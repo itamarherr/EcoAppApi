@@ -14,8 +14,6 @@ namespace EcoAppApi.Controllers
     public class UsersController(
         UserManager<AppUser> _userManager,
         DALContext _context
-        //SignInManager<AppUser> signInManager,
-        //RoleManager<IdentityRole> roleManager
         ) : ControllerBase
     {
 

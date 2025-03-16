@@ -22,12 +22,12 @@ namespace DAL.Data
 
             Console.WriteLine ($"Total Orders in DB: {allOrders.Count}");
 
-            //  Now apply filtering in-memory (LINQ-to-Objects)
+
             var filteredOrders = allOrders.Where (o =>
-                o.Id.ToString ().Contains (query) ||  //  ID Matching
-                (o.User?.Email?.ToLower ().Contains (query) ?? false) ||  // ✅ Prevent null exceptions
-                o.City.ToLower ().Contains (query) ||  //  City Matching
-                (Enum.GetName (typeof (Purpose), o.ConsultancyType)?.ToLower () ?? "").Contains (query) // ✅ Enum Matching (Now Safe!)
+                o.Id.ToString ().Contains (query) ||
+                (o.User?.Email?.ToLower ().Contains (query) ?? false) ||
+                o.City.ToLower ().Contains (query) ||
+                (Enum.GetName (typeof (Purpose), o.ConsultancyType)?.ToLower () ?? "").Contains (query)
             ).ToList ();
 
             Console.WriteLine ($"Search Results Count: {filteredOrders.Count}");

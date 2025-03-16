@@ -17,7 +17,6 @@ public class RegisterDto
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
     public string? PhoneNumber { get; set; }
-    //public string? ImageUrl { get; set; }
 }
 public static class RegisterDtoExtentions
 {
@@ -33,7 +32,6 @@ public static class RegisterDtoExtentions
             FirstName = dto.FirstName,
             LastName = dto.LastName,
             PhoneNumber = dto.PhoneNumber,
-            //ImageUrl = dto.ImageUrl = $"/Uploads/{uniqueFileName}"
         };
     }
 }

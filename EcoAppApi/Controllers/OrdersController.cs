@@ -144,8 +144,8 @@ public class OrdersController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError (ex, "Error fetching userws order");
-            return StatusCode (500, new { message = "Intenal server error", details = ex.Message });
+            _logger.LogError (ex, "Error fetching user order");
+            return StatusCode (500, new { message = "Internal server error", details = ex.Message });
         }
     }
 
@@ -172,8 +172,8 @@ public class OrdersController : ControllerBase
 
 
 
-    // PUT: api/Orders/5
-    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+
+    // To protect from overpoting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPut ("my-orders/for-update")]
     public async Task<IActionResult> UpdateCurrentUserOrder([FromBody] UpdateOrderDto updateOrderDto)
     {
@@ -223,7 +223,7 @@ public class OrdersController : ControllerBase
     }
 
     // POST: api/Orders
-    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    // To protect from overpoting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPost]
     public async Task<ActionResult<OrderDto>> CreateOrder([FromBody] CreateOrderDto createDto)
     {

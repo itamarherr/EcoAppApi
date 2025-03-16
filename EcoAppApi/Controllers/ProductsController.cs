@@ -29,22 +29,4 @@ public class ProductsController(
         return Ok (product.ToDto ());
     }
 
-    //[HttpPost]
-    //[Authorize (Roles = "admin")]
-    //public ActionResult AddProduct(CreateProductDto dto)
-    //{
-    //    if (User.Claims.Any (c => c.Type == "isHappy" && c.Value == "true"))
-    //    {
-    //        Console.WriteLine ("Welcome Happy Person");
-    //    }
-
-    //    if (ModelState.IsValid)
-    //    {
-    //        var product = dto.ToProduct ();
-    //        repository.Add (product);
-    //        return CreatedAtAction (nameof (GetProductsById), new { id = product.Id }, product.ToDto ());
-    //    }
-
-    //    return BadRequest (ModelState);
-    //}
 }

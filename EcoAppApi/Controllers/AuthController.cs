@@ -14,7 +14,6 @@ namespace EcoAppApi.Controllers;
 public class AuthController(
     UserManager<AppUser> userManager,
     SignInManager<AppUser> signInManager,
-    //RoleManager<IdentityRole> roleManager,
     JwtUtils jwtService
     ) : ControllerBase
 {
@@ -207,8 +206,8 @@ public class AuthController(
         return BadRequest (result.Errors);
     }
 
-    //Optional: Get for fatching user profiles (use cautiously)
-    //GET: Api/Auth/USer/{id}
+
+    //GET: Api/Auth/User/{id}
     [Authorize (Roles = "Admin")]
     [HttpGet ("User/{id}")]
     public async Task<IActionResult> GetUser(Guid id)
@@ -218,7 +217,6 @@ public class AuthController(
         return Ok (new { user.Id, user.Email, user.UserName, user.PhoneNumber });
     }
 
-    // Get for fatching a list of users.
     // For security issued the access will be just will be for the admin.
     [Authorize (Roles = "Admin")]
     [HttpGet ("AllUsers")]
@@ -253,16 +251,6 @@ public class AuthController(
             return NotFound (new { error = "User not found" });
         }
 
-        //var userDto = new
-        //{
-        //    user.Id,
-        //    user.Email,
-        //    user.UserName,
-        //    user.FirstName,
-        //    user.LastName,
-        //    user.PhoneNumber,
-        //    ImageUrl = string.IsNullOrEmpty (user.ImageUrl) ? "/Uploads/default-profile.png" : user.ImageUrl
-        //};
 
         return Ok (user.ToDto ());
     }
