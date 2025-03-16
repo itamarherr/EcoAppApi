@@ -6,7 +6,7 @@ This project is **under active development**, with additional features being imp
 
 ---
 
-## ** Features**
+##  Features
 -  **Orders CRUD** - Fully implemented.
 -  **Products CRUD** - In progress.
 -  **User Authentication & Role Management**.
@@ -16,13 +16,14 @@ This project is **under active development**, with additional features being imp
 ---
 
 
-## ** Installation & Setup**
-### **Clone the Repository**
+##  Installation & Setup
+### Clone the Repository
 ```bash
 git clone https://github.com/yourusername/EcoAdviceAppBackend.git
 cd EcoAdviceAppBackend
- Set Up the Database
+
  ```
+  Set Up the Database
 Update the connection string in appsettings.json:
 json
 ```bash
@@ -67,20 +68,20 @@ DeleteOrder_ShouldThrowExceptionWhenOrderNotFound
 Method	Endpoint	Description	Auth
 POST	/api/auth/register	Register a new user	
 POST	/api/auth/login	Login and get JWT token	
-GET	/api/orders	Get all orders	✅ Admin
+GET	/api/orders	Get all orders	 Admin
 DELETE	/api/orders/{id}	Delete order by ID	 Admin
 POST	/api/posts	Create a new post	 User
-🛠 Current Development Focus
-🚧 In Progress:
+ Current Development Focus
+ In Progress:
 
 Expanding role-based access control.
 Improving validation & business logic.
 Completing Product CRUD functionality.
 Enhancing API documentation with Swagger.
- License
+## License
 This project is open-source under the MIT License.
 
-Contributors
+## Contributors
 Itamar Herr 👨‍💻
 For any questions or contributions, feel free to open an issue or contact the repository maintainer.
 
